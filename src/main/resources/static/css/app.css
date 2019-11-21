@@ -1,0 +1,211 @@
+/*
+    Application wide CSS styling arranged by feature
+ */
+
+.wb-tables tbody tr td {
+    word-break: break-all;
+}
+
+.list-checkbox {
+    width: 20px;
+    height: 20px;
+}
+
+.large-buttons {
+    transform: scale(1.2);
+    min-height: 30px;
+    margin-top: 5px;
+}
+input[type="radio"] {
+    transform: scale(1.2);
+    margin: 2px;
+}
+
+.large-buttons:disabled span,
+.large-buttons[disabled] span{
+    color: #666666;
+    opacity: 0.5;
+}
+
+.text-red {color: red!important;}
+.text-green {color: darkgreen!important;}
+
+.border-primary-thick {border: 2px solid #2572b4;}
+.border-primary {border: 1px solid #2572b4;}
+
+.row-margin-left{
+    margin-left: 0;
+}
+.no-mar-top {
+    margin-top: 0;
+}
+.required-color {
+    color: #d3080c;
+}
+.restrict-width  {
+    max-width: 99%;
+}
+
+table.report-table thead {display: table-header-group;}
+table.report-table form {
+    border: 1px solid #000000;
+    padding: 2px;
+}
+table.report-table fieldset {
+    border: 1px solid #000000;
+    padding-bottom: 6px;
+}
+table.report-table hr {
+    margin-top: 0px!important;
+    margin-bottom: 0px!important;
+}
+table.report-table label {margin-bottom: 0px!important;}
+
+li.select2-results__option[aria-disabled=true] {
+    display: none;
+}
+
+option[data-active=false]:not(:checked) {
+    display: none;
+}
+
+span.sampling-data-selection-criteria {display: none;}
+span.sampling-data-selection-criteria span {display: inline-block; margin-right: 5px;}
+
+.dbLoading {
+    position:fixed!important;
+    bottom:0;
+    right:0;
+    background-image: url("../img/trans-back.png");
+    background-repeat: repeat;
+    width: 100%;
+    height: 108%;
+    z-index: 999!important;
+    padding-top: 2%;
+    overflow-y: hidden;
+    display: block;
+}
+
+.dbLoading div {
+    background-color: #ffffff;
+    text-align: center;
+    width: auto;
+    padding: 1% 1% 1% 1%;
+    border-radius: 4px;
+    position:absolute;
+    bottom:0;
+    right:0;
+}
+
+/* LENGTH FREQUENCY */
+table.lf-summ tr td,table.lf-summ tr th {text-align: center;}
+table.lf-summ tr td input[type="number"],table.lf-summ tr td span {
+    display: block;
+    width: 99%;
+    height: 20px;
+}
+th.lf-summ-cm, td.lf-summ-cm {
+    width: 40px!important;
+}
+td.lf-summ-u {background-color: rgba(222, 222, 222, 0.5); display: none;}
+td.lf-summ-m {background-color: rgba(221, 238, 255, 0.5); display: none;}
+td.lf-summ-f {background-color: rgba(255, 233, 255, 0.5); display: none;}
+th.lf-summ-u {display: none;}
+th.lf-summ-m {display: none;}
+th.lf-summ-f {display: none;}
+table.lf-summ tbody {
+    display:block;
+    max-height: 500px;
+    overflow-y: scroll;
+}
+table.lf-summ thead, table.lf-summ tbody tr {
+    display:table;
+    width:100%;
+    table-layout:fixed;/* even columns width , fix width of table too*/
+}
+table.lf-summ tbody {
+    width: calc( 100% + 1.3em )/* scrollbar is average 1em/16px width, remove it from thead width */
+}
+button.btn-keypad {
+    font-size: 150%;
+}
+button.btn-keypad-pressed {
+    background-color: #cccccc!important;
+}
+a.icon-selected {
+    background-color: #dddddd;
+    border-style: inset!important;
+}
+td.keypad-sampling-summ {
+    display: none;
+    width: 25%;
+    padding: 0px!important;
+}
+table.keypad-sampling-summ {margin: 0px!important;}
+table.keypad-sampling-summ caption {padding: 0px!important;}
+table.keypad-sampling-summ tr td, table.keypad-sampling-summ tr th {text-align: center;}
+
+div#lf-maturity-datalist-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1000000;
+    background-color: rgba(0,0,0,0.5);
+}
+
+div#lf-maturity-datalist-container div.border-primary-thick {
+    padding-bottom: 15px;
+    background-color: rgba(255,255,255,1);
+    width: 25%;
+    height: auto!important;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 50px;
+}
+
+.btn-input-search {
+    width: auto!important;
+    position: absolute!important;
+    top: 0px;
+    left: 75%;
+}
+
+th.sd-list {
+    display: none;
+}
+th.sd-list-archives {
+    display: none;
+}
+
+/* Cell Definition */
+.space-dropdown{
+    margin-bottom: 8px;
+}
+.dis-inline{
+    display: inline;
+}
+
+/* Trip Settings */
+.bold-header {
+    font-weight: bold;
+    font-size: 0.9em;
+}
+.approach-header{
+    margin-top: 0;
+    margin-bottom: 18px;
+}
+.tsTempDisplay{
+    display: none;
+}
+.removePadding {
+    padding: 0;
+}
+.padLabelLeft {
+    padding-left: 5px;
+}
+
+/* Sampling Ranges */
+.hidden-label {
+    display: inline;
+}

@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{__${'layouts/intranet-layout-'+layoutMode}__}">
+<head>
+    <title th:utext="${@messages.getMessage('page.header.edit_in')+' '+@messages.getMessage('page.settings.code_tables.unit_areas')}"></title>
+</head>
+<body>
+<th:block layout:fragment="content">
+    <br />
+    <section class="panel panel-primary">
+        <div class="panel-heading">
+            <h3 class="panel-title" th:utext="${@messages.getMessage('page.header.edit_in')+' '+@messages.getMessage('page.settings.code_tables.unit_areas')}">Title</h3>
+        </div>
+        <div class="wb-frmvld panel-body">
+            <section th:if="${errorMessageKey != null}" class="alert alert-danger" onclick="$(this).hide()">
+                <p th:utext="#{__${errorMessageKey}__}">Error</p>
+            </section>
+            <form th:action="@{__${'/'+pageLang+T(ca.gc.dfo.psffs.controllers.lookups.UnitAreaController).UNIT_AREA_EDIT_PATH+'(lId='+unitAreaForm.id+')'}__}" th:method="POST" th:object="${unitAreaForm}">
+                <th:block th:replace="layouts/codeTables :: baseLookupFields(codeLabelKey=${'field.unit_area_code'})" />
+                <th:block th:replace="layouts/codeTables :: unitAreaFields" />
+                <br />
+                <button id="cdSubmit" type="submit" class="btn btn-primary" th:utext="#{btn.save}">Save</button>
+                <input type="reset" class="btn btn-default" th:value="${@messages.getMessage('btn.reset', true)}" />
+                <button type="button" class="btn btn-default bc-back" th:utext="#{btn.cancel}">Cancel</button>
+            </form>
+        </div>
+    </section>
+    <br /><br />
+</th:block>
+<!-- 	Global Layout JS -->
+<th:block layout:fragment="scripts">
+    <script th:src="@{/js/lookups.js}" type="text/javascript"></script>
+</th:block>
+</body>
+</html>

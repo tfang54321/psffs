@@ -1,0 +1,1240 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+<head></head>
+<body>
+    <th:block th:fragment="formHeader" th:with="ssSelect2=${sampleSpeciesSelect2 != null and sampleSpeciesSelect2 ? 'true' : 'false'}, renderId = ${renderLFId != null ? renderLFId : true}">
+        <div class="panel panel-primary">
+            <header class="panel-heading">
+                <h3 class="panel-title" th:utext="${@messages.getMessage(#request, 'page.samplings.length_frequency.form_header')}">Title</h3>
+            </header>
+            <div class="panel-body">
+                <div class="container-fluid">
+                    <div class="row mrgn-bttm-md">
+                        <div class="col-md-4" th:if="${renderId}" >
+                            <label for="lfId" th:utext="${@messages.getMessage(#request, 'form.field.length_frequency_id')}">Length-Frequency ID</label>
+                            <br/>
+                            <input type="hidden" th:field="*{id}" />
+                            <input type="text" readonly="readonly" th:field="*{lfId}" id="lfId" th:attr="data-text-only=${'true'}" />
+                        </div>
+                        <div class="col-md-4">
+                            <label for="statusId" th:utext="${@messages.getMessage(#request, 'form.field.status')}">Status</label>
+                            <br/>
+                            <select th:attr="readonly=${'readonly'},data-text-only=${'true'}" th:field="*{statusId}" id="statusId">
+                                <th:block th:each="status : ${@lookupService.getLookupsByKey(#request, 'samplingStatus')}">
+                                    <option th:value="${status.value}" th:utext="${status.text}">Text</option>
+                                </th:block>
+                            </select>
+                            <input type="hidden" name="statusIdText" id="statusIdText" />
+                        </div>
+                        <div class="col-md-4">
+                            <label for="catchDate" class="required">
+                                <span class="field-name" th:utext="${@messages.getMessage(#request, 'form.field.catch_date')}">Catch date</span>
+                                <strong class="required" th:utext="${@messages.getMessage(#request, 'form.required')}">(required)</strong>
+                            </label>
+                            <br/>
+                            <input type="date" th:field="*{catchDate}" id="catchDate" required="required" />
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <label for="portOfLandingId">
+                                <span class="field-name" th:utext="${@messages.getMessage(#request, 'form.field.port_of_landing')}">Port of landing</span>
+                            </label>
+                            <br/>
+                            <select th:field="*{portOfLandingId}" th:attr="data-searchable=${'true'}" class="full-width" id="portOfLandingId">
+                                <th:block th:each="port : ${@lookupService.getLookupsByKey(#request, 'ports', true)}">
+                                    <option th:value="${port.value}" th:utext="${port.text}" th:attr="data-active=${port.active}">Text</option>
+                                </th:block>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="directedSpeciesId" class="required">
+                                <span class="field-name" th:utext="${@messages.getMessage(#request, 'form.field.directed_species')}">Directed species</span>
+                                <strong class="required" th:utext="${@messages.getMessage(#request, 'form.required')}">(required)</strong>
+                            </label>
+                            <br/>
+                            <select th:field="*{directedSpeciesId}" th:attr="data-searchable=${'true'}" class="full-width" id="directedSpeciesId" required="required">
+                                <th:block th:each="species : ${@lookupService.getLookupsByKey(#request, 'species', true)}">
+                                    <option th:value="${species.value}" th:utext="${species.text}" th:attr="data-active=${species.active}">Text</option>
+                                </th:block>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="sampleSpeciesId" class="required">
+                                <span class="field-name" th:utext="${@messages.getMessage(#request, 'form.field.sample_species')}">Sample species</span>
+                                <strong class="required" th:utext="${@messages.getMessage(#request, 'form.required')}">(required)</strong>
+                            </label>
+                            <br/>
+                            <select th:field="*{sampleSpeciesId}" th:attr="data-searchable=${ssSelect2}" class="full-width" id="sampleSpeciesId" required="required">
+                                <th:block th:each="species : ${@lookupService.getLookupsByKey(#request, 'species', true)}">
+                                    <option th:value="${species.value}" th:utext="${species.text}" th:attr="data-active=${species.active}">Text</option>
+                                </th:block>
+                            </select>
+                            <input type="hidden" name="sampleSpeciesIdText" id="sampleSpeciesIdText" />
+                        </div>
+                    </div>
+                    <div class="row"><div class="col-md-12"><hr /></div></div>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <label for="vesselId" class="required">
+                                <span class="field-name" th:utext="${@messages.getMessage(#request, 'form.field.vessel')}">Vessel</span>
+                                <strong class="required" th:utext="${@messages.getMessage(#request, 'form.required')}">(required)</strong>
+                            </label>
+                            <br/>
+                            <select th:field="*{vesselId}" th:attr="data-searchable=${'true'}" class="full-width" id="vesselId" required="required">
+                                <th:block th:each="vessel : ${@lookupService.getLookupsByKey(#request, 'vessels', true)}">
+                                    <option th:value="${vessel.value}" th:utext="${vessel.text}" th:attr="data-active=${vessel.active}">Text</option>
+                                </th:block>
+                            </select>
+                        </div>
+                        <div class="col-md-5">
+                            <label for="otherVesselDetails">
+                                <span class="field-name" th:utext="${@messages.getMessage(#request, 'form.field.not_listed_enter_details')}">If "Not listed", enter details</span>
+                            </label>
+                            <br/>
+                            <textarea class="full-width" rows="2" th:attr="maxlength=${'255'}" th:field="*{otherVesselDetails}" id="otherVesselDetails"></textarea>
+                        </div>
+                    </div>
+                    <div class="row"><div class="col-md-12"><hr /></div></div>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <label for="enteredBy" class="required">
+                                <span class="field-name" th:utext="${@messages.getMessage(#request, 'form.field.entered_by')}">Entered by</span>
+                                <strong class="required" th:utext="${@messages.getMessage(#request, 'form.required')}">(required)</strong>
+                            </label>
+                            <br/>
+                            <select th:field="*{enteredBy}" th:attr="data-searchable=${'true'}" class="full-width" id="enteredBy" required="required">
+                                <th:block th:each="user : ${@lookupService.getLookupsByKey(#request, 'enteredBys', true)}">
+                                    <option th:value="${user.value}" th:utext="${user.text}" th:attr="data-active=${user.active}">Text</option>
+                                </th:block>
+                            </select>
+                        </div>
+                        <div class="col-md-5">
+                            <label for="enteredByOther">
+                                <span class="field-name" th:utext="${@messages.getMessage(#request, 'form.field.not_listed_enter_initials')}">If "Not listed", enter initials</span>
+                            </label>
+                            <br/>
+                            <input type="text" th:attr="data-rule-lettersonly=${'true'},data-rule-minlength=${'2'}" class="full-width" maxlength="2" th:field="*{enteredByOther}" id="enteredByOther" value="" />
+                        </div>
+                    </div>
+                    <div class="row mrgn-tp-md" style="display: none;">
+                        <div class="col-md-3">
+                            <label for="localLfId" th:utext="${@messages.getMessage(#request, 'field.local_lf_id')}">Was Local LF ID</label>
+                        </div>
+                        <div class="col-md-3">
+                            <input type="text" class="full-width" id="localLfId" th:field="*{localLfId}" readonly="readonly" th:attr="data-text-only=${'true'}" />
+                        </div>
+                    </div>
+                    <input type="hidden" id="lengthGroupMin" th:field="*{lengthGroupMin}" />
+                    <input type="hidden" id="lengthGroupMax" th:field="*{lengthGroupMax}" />
+                </div>
+            </div>
+        </div>
+    </th:block>
+
+    <th:block th:fragment="formSections">
+        <div class="row">
+            <div class="col-md-6">
+                <ul class="list-unstyled">
+                    <li>
+                        <details>
+                            <summary th:utext="${@messages.getMessage(#request, 'page.header.catch_time_location')}">Catch time and location</summary>
+                            <section class="container-fluid">
+                                <div class="row mrgn-bttm-md">
+                                    <div class="col-md-6">
+                                        <label th:utext="${@messages.getMessage(#request, 'field.catch_location')}" class="field-name">Catch location</label>
+                                        <br/>
+                                        <th:block th:each="catchLoc,catchLocStat : ${@lookupService.getLookupsByKey(#request, 'catchLocations')}">
+                                            <input type="radio" class="lf-catch-loc" th:id="${'catchLoc'+catchLocStat.count}" th:field="*{catchLocationId}" th:value="${catchLoc.value}" />
+                                            <label th:attr="for=${'catchLoc'+catchLocStat.count}" th:utext="${catchLoc.text}">Text</label>
+                                        </th:block>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="lf-catch-loc" style="display: none;" th:utext="${@messages.getMessage(#request, 'field.quarter')}" for="offshoreQuarter" th:attr="data-catch-loc=${6}">Quarter</label>
+                                        <label class="lf-catch-loc" style="display: none;" th:utext="${@messages.getMessage(#request, 'field.quarter')}" for="inshoreQuarter" th:attr="data-catch-loc=${7}">Quarter</label>
+                                        <br/>
+                                        <select id="offshoreQuarter" style="display: none;" class="lf-catch-loc" th:field="*{quarterData}" th:attr="data-catch-loc=${6}" th:disabled="${true}">
+                                            <th:block th:each="quarter : ${@lookupService.getLookupsByKey(#request, 'offshoreQuarters', false)}">
+                                                <option th:value="${quarter.value}" th:utext="${quarter.text}">Text</option>
+                                            </th:block>
+                                        </select>
+                                        <select id="inshoreQuarter" style="display: none;" class="lf-catch-loc" th:field="*{quarterData}" th:attr="data-catch-loc=${7}" th:disabled="${true}">
+                                            <th:block th:each="quarter : ${@lookupService.getLookupsByKey(#request, 'inshoreQuarters', false)}">
+                                                <option th:value="${quarter.value}" th:utext="${quarter.text}">Text</option>
+                                            </th:block>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="row mrgn-bttm-md">
+                                    <div class="col-md-6">
+                                        <label for="catchTime" th:utext="${@messages.getMessage(#request, 'field.catch_time')}" class="field-name">Catch time</label>
+                                        <br/>
+                                        (<span th:utext="${@messages.getMessage(#request, 'legend.catch_time.gmt')}">mm:hh GMT</span>)
+                                        <br/>
+                                        <input type="time" id="catchTime" th:field="*{catchTime}" />
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="nafoDivisionId" th:utext="${@messages.getMessage(#request, 'field.nafo_division')}" class="field-name">NAFO division</label>
+                                        <br/>
+                                        <select id="nafoDivisionId" th:field="*{nafoDivisionId}" class="restrict-width">
+                                            <th:block th:each="nafoDivision : ${@lookupService.getLookupsByKey(#request, 'nafoDivisions', true)}">
+                                                <option th:value="${nafoDivision.value}" th:utext="${nafoDivision.text}" th:attr="data-active=${nafoDivision.active}">Text</option>
+                                            </th:block>
+                                        </select>
+                                        <input type="hidden" name="nafoDivisionIdText" id="nafoDivisionIdText" />
+                                    </div>
+                                </div>
+                                <div class="row mrgn-bttm-md">
+                                    <div class="col-md-6">
+                                        <label for="countryId" th:utext="${@messages.getMessage(#request, 'field.country')}" class="field-name">Country</label>
+                                        <br/>
+                                        <select id="countryId" th:field="*{countryId}" class="full-width" th:attr="data-searchable=${'true'}">
+                                            <th:block th:each="country : ${@lookupService.getLookupsByKey(#request, 'countries', true)}">
+                                                <option th:value="${country.value}" th:utext="${country.text}" th:attr="data-active=${country.active}">Text</option>
+                                            </th:block>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="unitAreaData" th:utext="${@messages.getMessage(#request, 'field.unit_area')}" class="field-name">Unit area</label>
+                                        <br/>
+                                        <select id="unitAreaData" th:field="*{unitAreaData}" th:disabled="${true}" class="restrict-width">
+                                            <th:block th:each="unitArea : ${@lookupService.getLookupsByKey(#request, 'unitAreas', true)}">
+                                                <option th:value="${unitArea.value}" th:utext="${unitArea.text}" th:attr="data-active=${unitArea.active}">Text</option>
+                                            </th:block>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <label for="latitude" th:utext="${@messages.getMessage(#request, 'field.latitude')}" class="field-name">latitude</label>
+                                        <br/>
+                                        <input type="number" id="latitude" th:field="*{latitude}" th:min="${@settingService.getSettingValueByName('MIN_LATITUDE')}" th:max="${@settingService.getSettingValueByName('MAX_LATITUDE')}" oninput="app.validateIsNumber(this)"/>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="longitude" th:utext="${@messages.getMessage(#request, 'field.longitude')}" class="field-name">Longitude</label>
+                                        <br/>
+                                        <input type="number" id="longitude" th:field="*{longitude}" th:min="${@settingService.getSettingValueByName('MIN_LONGITUDE')}" th:max="${@settingService.getSettingValueByName('MAX_LONGITUDE')}" oninput="app.validateIsNumber(this)" />
+                                    </div>
+                                </div>
+                            </section>
+                        </details>
+                    </li>
+                    <li>
+                        <details>
+                            <summary th:utext="${@messages.getMessage(#request, 'page.header.sampling_requirements')}">Sampling requirements</summary>
+                            <section class="container-fluid">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <table class="table">
+                                            <thead>
+                                                <tr>
+                                                    <th colspan="2" scope="colgroup" style="width: 70%;" th:utext="${@messages.getMessage(#request, 'field.required_samplings')}">Req Samp</th>
+                                                    <th scope="col" style="width: 15%;" th:utext="${@messages.getMessage(#request, 'table.header.per_nth')}">Per Nth</th>
+                                                    <th scope="col" style="width: 15%;" th:utext="${@messages.getMessage(#request, 'form.header.sexed')}">Sexed</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td>
+                                                        <label for="reqOtoliths" th:utext="${@messages.getMessage(#request, 'field.otolith')}">Otolith</label>
+                                                    </td>
+                                                    <td>
+                                                        <input type="number" id="reqOtoliths" class="lf-sampling-req full-width" th:attr="data-for-sampling=${'o'}" th:field="*{reqOtoliths}" min="0" oninput="app.validateIsNumber(this);app.validateLengthOfNumber(this,9)"/>
+                                                    </td>
+                                                    <td style="text-align: center;">
+                                                        <input type="text" id="perNthOtoliths" class="lf-sampling-nth" th:attr="data-for-sampling=${'o'},data-text-only=${'true'}" th:field="*{perNthOtoliths}" readonly="readonly" />
+                                                    </td>
+                                                    <td style="text-align: center;">
+                                                        <select id="sexedOtoliths" class="lf-sampling-sexed" th:attr="data-for-sampling=${'o'},data-text-only=${'true'}" th:field="*{sexedOtoliths}">
+                                                            <th:block th:each="yesNo : ${@lookupService.getLookupsByKey(#request, 'yesOrNo', false)}">
+                                                                <option th:value="${yesNo.value}" th:utext="${yesNo.text}">YesNo</option>
+                                                            </th:block>
+                                                        </select>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        <label for="reqStomachs" th:utext="${@messages.getMessage(#request, 'field.stomach')}">Stomach</label>
+                                                    </td>
+                                                    <td>
+                                                        <input type="number" id="reqStomachs" class="lf-sampling-req full-width" th:attr="data-for-sampling=${'s'}" th:field="*{reqStomachs}" min="0" oninput="app.validateIsNumber(this);app.validateLengthOfNumber(this,9)"/>
+                                                    </td>
+                                                    <td style="text-align: center;">
+                                                        <input type="text" id="perNthStomachs" class="lf-sampling-nth" th:attr="data-for-sampling=${'s'},data-text-only=${'true'}" th:field="*{perNthStomachs}" readonly="readonly" />
+                                                    </td>
+                                                    <td style="text-align: center;">
+                                                        <select id="sexedStomachs" class="lf-sampling-sexed" th:attr="data-for-sampling=${'s'},data-text-only=${'true'}" th:field="*{sexedStomachs}">
+                                                            <th:block th:each="yesNo : ${@lookupService.getLookupsByKey(#request, 'yesOrNo', false)}">
+                                                                <option th:value="${yesNo.value}" th:utext="${yesNo.text}">YesNo</option>
+                                                            </th:block>
+                                                        </select>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        <label for="reqFrozens" th:utext="${@messages.getMessage(#request, 'field.frozen')}">Frozen</label>
+                                                    </td>
+                                                    <td>
+                                                        <input type="number" id="reqFrozens" class="lf-sampling-req full-width" th:attr="data-for-sampling=${'c'}" th:field="*{reqFrozens}" min="0" oninput="app.validateIsNumber(this);app.validateLengthOfNumber(this,9)"/>
+                                                    </td>
+                                                    <td style="text-align: center;">
+                                                        <input type="text" id="perNthFrozens" class="lf-sampling-nth" th:attr="data-for-sampling=${'c'},data-text-only=${'true'}" th:field="*{perNthFrozens}" readonly="readonly" />
+                                                    </td>
+                                                    <td style="text-align: center;">
+                                                        <select id="sexedFrozens" class="lf-sampling-sexed" th:attr="data-for-sampling=${'c'},data-text-only=${'true'}" th:field="*{sexedFrozens}">
+                                                            <th:block th:each="yesNo : ${@lookupService.getLookupsByKey(#request, 'yesOrNo', false)}">
+                                                                <option th:value="${yesNo.value}" th:utext="${yesNo.text}">YesNo</option>
+                                                            </th:block>
+                                                        </select>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>
+                                                        <label for="reqWeights" th:utext="${@messages.getMessage(#request, 'field.weight')}">Weight</label>
+                                                    </td>
+                                                    <td>
+                                                        <input type="number" id="reqWeights" class="lf-sampling-req full-width" th:attr="data-for-sampling=${'w'}" th:field="*{reqWeights}" min="0" oninput="app.validateIsNumber(this);app.validateLengthOfNumber(this,9)"/>
+                                                    </td>
+                                                    <td style="text-align: center;">
+                                                        <input type="text" id="perNthWeights" class="lf-sampling-nth" th:attr="data-for-sampling=${'w'},data-text-only=${'true'}" th:field="*{perNthWeights}" readonly="readonly" />
+                                                    </td>
+                                                    <td style="text-align: center;">
+                                                        <select id="sexedWeights" class="lf-sampling-sexed" th:attr="data-for-sampling=${'w'},data-text-only=${'true'}" th:field="*{sexedWeights}">
+                                                            <th:block th:each="yesNo : ${@lookupService.getLookupsByKey(#request, 'yesOrNo', false)}">
+                                                                <option th:value="${yesNo.value}" th:utext="${yesNo.text}">YesNo</option>
+                                                            </th:block>
+                                                        </select>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                                <div class="row mrgn-bttm-md">
+                                    <div class="col-md-6">
+                                        <label for="sexTypeId" th:utext="${@messages.getMessage(#request, 'field.sex_type')}" class="field-name">Sex type</label>
+                                        <br/>
+                                        <select id="sexTypeId" th:field="*{sexTypeId}" class="full-width">
+                                            <th:block th:each="sexType : ${@lookupService.getLookupsByKey(#request, 'sexTypes', false)}">
+                                                <option th:value="${sexType.value}" th:utext="${sexType.text}">Text</option>
+                                            </th:block>
+                                        </select>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <label for="measuringTechniqueId" th:utext="${@messages.getMessage(#request, 'field.measuring_technique')}">Measuring technique</label>
+                                        <br/>
+                                        <select id="measuringTechniqueId" th:field="*{measuringTechniqueId}" th:attr="data-text-only=${'true'}">
+                                            <th:block th:each="mt : ${@lookupService.getLookupsByKey(#request, 'measuringTechniques', true)}">
+                                                <option th:value="${mt.value}" th:utext="${mt.text}" th:attr="data-active=${mt.active}">Option</option>
+                                            </th:block>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <label for="lengthGroupId" th:utext="${@messages.getMessage(#request, 'field.length_group')}">Length group</label>
+                                        <br/>
+                                        <select id="lengthGroupId" th:field="*{lengthGroupId}" th:attr="data-text-only=${'true'}">
+                                            <th:block th:each="lg : ${@lookupService.getLookupsByKey(#request, 'lengthGroups', false)}">
+                                                <option th:value="${lg.value != '' ? lg.value.substring(0, lg.value.indexOf(';')) : ''}" th:utext="${lg.text}" th:attr="data-active=${lg.active}">Text</option>
+                                            </th:block>
+                                        </select>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <label for="lengthUnitId" th:utext="${@messages.getMessage(#request, 'field.length_unit')}">Length unit</label>
+                                        <br/>
+                                        <select id="lengthUnitId" th:field="*{lengthUnitId}" th:attr="data-text-only=${'true'}">
+                                            <th:block th:each="lu : ${@lookupService.getLookupsByKey(#request, 'lengthUnits', false)}">
+                                                <option th:value="${lu.value}" th:utext="${lu.text}">Text</option>
+                                            </th:block>
+                                        </select>
+                                    </div>
+                                </div>
+                            </section>
+                        </details>
+                    </li>
+                </ul>
+            </div>
+            <div class="col-md-6">
+                <ul class="list-unstyled">
+                    <li>
+                        <details>
+                            <summary th:utext="${@messages.getMessage(#request, 'page.header.vessel_details')}">Vessel details</summary>
+                            <section class="alert alert-info" id="no-vessel-details">
+                                <p th:utext="${@messages.getMessage(#request, 'info.no_vessel_selected')}">No vessel selected</p>
+                            </section>
+                            <div class="container-fluid" id="vessel-details" style="display: none;">
+                                <div class="row mrgn-bttm-md">
+                                    <div class="col-md-12">
+                                        <label for="vessel_cfvSideNumber" th:utext="${@messages.getMessage(#request, 'field.cfv_side_number')}">CFV/Side number</label>
+                                        <br/>
+                                        <input type="text" id="vessel_cfvSideNumber" readonly="readonly" data-text-only="true" />
+                                    </div>
+                                </div>
+                                <div class="row mrgn-bttm-md">
+                                    <div class="col-md-12">
+                                        <label for="vessel_description" th:utext="${@messages.getMessage(#request, 'field.description')}">Description</label>
+                                        <br/>
+                                        <input type="text" class="full-width" id="vessel_description" readonly="readonly" data-text-only="true" />
+                                    </div>
+                                </div>
+                                <div class="row mrgn-bttm-md">
+                                    <div class="col-md-5">
+                                        <label for="vessel_vesselLengthMeters" th:utext="${@messages.getMessage(#request, 'field.length')}">Length</label>
+                                        <br/>
+                                        <input type="text" id="vessel_vesselLengthMeters" style="width: 75px" readonly="readonly" data-conv-num-other='{"fieldId":"vessel_vesselLengthFeet","factor":3.281,"op":"*"}' data-text-only="true" />m&nbsp;&nbsp;
+                                        <input type="text" id="vessel_vesselLengthFeet" style="width: 75px;" readonly="readonly" data-text-only="true" /><span th:utext="${@messages.getMessage(#request, 'field.unit.feet')}">ft</span>
+                                    </div>
+
+                                    <div class="col-md-7">
+                                        <label for="vessel_lengthCategoryId" th:utext="${@messages.getMessage(#request, 'field.length_category')}">Length category</label>
+                                        <br/>
+                                        <select id="vessel_lengthCategoryId" data-text-only="true">
+                                            <th:block th:each="lc : ${@lookupService.getLookupsByKey(#request, 'lengthCategories', false)}">
+                                                <option th:value="${lc.value}" th:utext="${lc.text}" th:attr="data-active=${lc.active}">Text</option>
+                                            </th:block>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="row mrgn-bttm-md">
+                                    <div class="col-md-5">
+                                        <label for="vessel_tonnageId" th:utext="${@messages.getMessage(#request, 'field.tonnage')}">Tonnage</label>
+                                        <br/>
+                                        <select id="vessel_tonnageId" data-text-only="true">
+                                            <th:block th:each="tg : ${@lookupService.getLookupsByKey(#request, 'tonnages', false)}">
+                                                <option th:value="${tg.value}" th:utext="${tg.text}" th:attr="data-active=${tg.active}">Text</option>
+                                            </th:block>
+                                        </select>
+                                    </div>
+
+                                    <div class="col-md-7">
+                                        <label for="vessel_grTonnage" th:utext="${@messages.getMessage(#request, 'field.grt_tonnage')}">GRT</label>
+                                        <br/>
+                                        <input type="text" id="vessel_grTonnage" style="width: 75px;" readonly="readonly" data-text-only="true" />&nbsp;
+                                        <span th:utext="${@messages.getMessage(#request, 'field.unit.register_tons')}">register tons</span>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <label for="vesselComments" th:utext="${@messages.getMessage(#request, 'field.comments')}" class="field-name">Comments</label>
+                                        <br/>
+                                        <textarea id="vesselComments" rows="4" th:field="*{vesselComments}" th:attr="maxLength=${'4000'}" class="full-width"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        </details>
+                    </li>
+                    <li>
+                        <details>
+                            <summary th:utext="${@messages.getMessage(#request, 'page.header.catch_details')}">Catch details</summary>
+                            <div class="container-fluid">
+                                <div class="row mrgn-bttm-md">
+                                    <div class="col-md-6">
+                                        <label for="gearId" th:utext="${@messages.getMessage(#request, 'field.gear')}">Gear</label>
+                                        <br/>
+                                        <select id="gearId" class="full-width" th:field="*{gearId}" th:attr="data-searchable=${'true'}">
+                                            <th:block th:each="gear : ${@lookupService.getLookupsByKey(#request, 'gears', true)}">
+                                                <option th:value="${gear.value}" th:utext="${gear.text}" th:attr="data-active=${gear.active}">Text</option>
+                                            </th:block>
+                                        </select>
+                                        <input type="hidden" name="gearIdText" id="gearIdText" />
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <label for="gearAmount" th:utext="${@messages.getMessage(#request, 'field.gear_amount')}">Gear amount</label> (<span th:utext="${@messages.getMessage(#request, 'field.unit.gear_amount')}">lines/nets</span>)
+                                        <br/>
+                                        <input type="number" id="gearAmount" class="full-width" th:field="*{gearAmount}" th:attr="placeholder=${@messages.getMessage(#request, 'field.unit.gear_amount')}" oninput="app.validateIsNumber(this);app.validateLengthOfNumber(this, 9)"/>
+                                    </div>
+                                </div>
+                                <div class="row mrgn-bttm-md">
+                                    <div class="col-md-6">
+                                        <label for="catchCategoryId" th:utext="${@messages.getMessage(#request, 'field.catch_category')}">Category</label>
+                                        <br/>
+                                        <select id="catchCategoryId" class="full-width" th:field="*{catchCategoryId}" th:attr="data-searchable=${'true'}">
+                                            <th:block th:each="cc : ${@lookupService.getLookupsByKey(#request, 'catchCategories', true)}">
+                                                <option th:value="${cc.value}" th:utext="${cc.text}" th:attr="data-active=${cc.active}">Text</option>
+                                            </th:block>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="row mrgn-bttm-md">
+                                    <div class="col-md-6">
+                                        <label for="meshSizeMillimeters" th:utext="${@messages.getMessage(#request, 'field.mesh_size')}">Mesh size</label> (<span th:utext="${@messages.getMessage(#request, 'field.unit.inch')}">in</span>/mm)
+                                        <br/>
+                                        <div class="col-md-6">
+                                            <input type="text" class="full-width" id="meshSizeInches" th:attr="placeholder=${@messages.getMessage(#request, 'field.unit.inch')},data-conv-num-other=${'{&quot;fieldId&quot;:&quot;meshSizeMillimeters&quot;,&quot;factor&quot;:25.4,&quot;op&quot;:&quot;*&quot;,&quot;roundUp&quot;:true}'}" oninput="app.validateIsFloat(this);app.validateLengthOfNumber(this, 9)"/>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <input type="text" class="full-width" id="meshSizeMillimeters" th:field="*{meshSizeMillimeters}" th:attr="placeholder=${'mm'},data-conv-num-other=${'{&quot;fieldId&quot;:&quot;meshSizeInches&quot;,&quot;factor&quot;:25.4,&quot;op&quot;:&quot;/&quot;,&quot;roundUp&quot;:true}'}" th:min="${@settingService.getSettingValueByName('MIN_MESH_SIZE')}" th:max="${@settingService.getSettingValueByName('MAX_MESH_SIZE')}"  oninput="app.validateIsFloat(this);app.validateLengthOfNumber(this, 9)"/>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <label for="depthMeters" th:utext="${@messages.getMessage(#request, 'field.depth')}">Depth</label> (<span th:utext="${@messages.getMessage(#request, 'field.unit.fathoms')}">fathoms</span>/m)
+                                        <br/>
+                                        <div class="col-md-6">
+                                            <input type="text" class="full-width" id="depthFathoms" th:attr="placeholder=${@messages.getMessage(#request, 'field.unit.fathoms')},data-conv-num-other=${'{&quot;fieldId&quot;:&quot;depthMeters&quot;,&quot;factor&quot;:1.8288,&quot;op&quot;:&quot;*&quot;,&quot;roundUp&quot;:true}'}" oninput="app.validateIsFloat(this);app.validateLengthOfNumber(this, 9)"/>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <input type="text" class="full-width" id="depthMeters" th:field="*{depthMeters}" th:attr="placeholder=${'m'},data-conv-num-other=${'{&quot;fieldId&quot;:&quot;depthFathoms&quot;,&quot;factor&quot;:1.8288,&quot;op&quot;:&quot;/&quot;,&quot;roundUp&quot;:true}'}" th:min="${@settingService.getSettingValueByName('MIN_DEPTH')}" th:max="${@settingService.getSettingValueByName('MAX_DEPTH')}"  oninput="app.validateIsFloat(this);app.validateLengthOfNumber(this, 9)"/>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row mrgn-bttm-md">
+                                    <div class="col-md-6">
+                                        <label for="conversionFactorData" th:utext="${@messages.getMessage(#request, 'field.weight_conv_factor')}">Weight conversion factor</label>
+                                        <br/>
+                                        <select id="conversionFactorData" class="full-width" th:field="*{conversionFactorData}">
+                                            <th:block th:each="wcf : ${@lookupService.getLookupsByKey(#request, 'weightConversionFactors')}">
+                                                <option th:value="${wcf.value}" th:utext="${wcf.text}" th:attr="data-active=${wcf.active}">Text</option>
+                                            </th:block>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="row mrgn-bttm-md">
+                                    <div class="col-md-6">
+                                        <label for="turnoutWeightKilograms" th:utext="${@messages.getMessage(#request, 'field.turnout_weight')}">Turnout weight</label> (lbs/kg)
+                                        <br/>
+                                        <div class="col-md-6">
+                                            <input type="text" class="full-width turnout-kg-lbs" id="turnoutWeightLbs" placeholder="lbs"  oninput="app.validateIsFloat(this);app.validateLengthOfNumber(this, 9)"/>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <input type="text" class="full-width turnout-kg-lbs" id="turnoutWeightKilograms" th:field="*{turnoutWeightKilograms}" th:attr="placeholder=${'kg'}"  oninput="app.validateIsFloat(this);app.validateLengthOfNumber(this, 9)"/>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <label for="sampleWeightKilograms" th:utext="${@messages.getMessage(#request, 'field.sample_weight')}">Sample weight</label> (lbs/kg)
+                                        <br/>
+                                        <div class="col-md-6">
+                                            <input type="text" class="full-width sample-kg-lbs" id="sampleWeightLbs" placeholder="lbs"  oninput="app.validateIsFloat(this);app.validateLengthOfNumber(this, 9)"/>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <input type="text" class="full-width sample-kg-lbs" id="sampleWeightKilograms" th:field="*{sampleWeightKilograms}" th:attr="placeholder=${'kg'}" oninput="app.validateIsFloat(this);app.validateLengthOfNumber(this, 9)"/>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row mrgn-bttm-md">
+                                    <div class="col-md-6">
+                                        <label for="soakTimeHours" th:utext="${@messages.getMessage(#request, 'field.soak_time')}">Soak time</label> (hrs)
+                                        <br/>
+                                        <input type="text" id="soakTimeHours" class="full-width" th:field="*{soakTimeHours}" th:attr="placeholder=${'hrs'}" />
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <label for="catchDetailsComments" th:utext="${@messages.getMessage(#request, 'field.comments')}">Comments</label>
+                                        <br/>
+                                        <textarea id="catchDetailsComments" rows="4" th:field="*{catchDetailsComments}" th:attr="maxLength=${'4000'}" class="full-width"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        </details>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <ul class="list-unstyled">
+                    <li>
+                        <details id="dt-frequency-summ" data-disabled="false" data-loaded="false">
+                            <summary>
+                                <span th:utext="${@messages.getMessage(#request, 'page.header.frequency_summary')}">Frequency summary</span>
+
+                            </summary>
+                            <div id="lf-summ-loading">
+                                <h3><span th:utext="#{page.loading}">Loading</span>&nbsp;<span id="summary-spinner" class="glyphicon glyphicon-cog spin"></span></h3>
+                            </div>
+                            <div class="container-fluid" id="lf-summ-container" style="display: none;">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <button type="button" id="btn-keypad-modal" class="btn btn-default">
+                                            <span th:utext="${@messages.getMessage(#request, 'btn.field_capture_keypad')}">Individual capture keypad</span>&nbsp;<span class="glyphicon glyphicon-th"></span>
+                                        </button>
+                                        <button type="button" id="btn-view-sd" class="btn btn-default" style="display: none;" onclick="lengthFrequency.viewSamplingData()">
+                                            <span th:utext="#{btn.view_sampling_data}">View sampling data</span>&nbsp;<span class="glyphicon glyphicon-th-list"></span>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="table-responsive">
+                                            <table class="table table-hover lf-summ" id="tbl-lf-summary" style="margin-bottom: 0px!important;">
+                                                <thead class="lf-summ">
+                                                    <tr>
+                                                        <th class="lf-summ-length-unit lf-summ-cm">cm</th>
+                                                        <th class="lf-summ-l lf-summ-u">
+                                                            <abbr th:title="${@m.getM('field.unsexed')}" th:utext="${@messages.getMessage(#request, 'abbr.unsexed')}">Unsexed</abbr>
+                                                        </th>
+                                                        <th class="lf-summ-o lf-summ-u">
+                                                            <abbr th:title="${@messages.getMessage(#request, 'field.otolith')}+'('+${@messages.getMessage(#request, 'field.unsexed')}+')'" th:text="${@messages.getMessage(#request, 'abbr.otolith')}">O</abbr>
+                                                        </th>
+                                                        <th class="lf-summ-s lf-summ-u">
+                                                            <abbr th:title="${@messages.getMessage(#request, 'field.stomach')}+'('+${@messages.getMessage(#request, 'field.unsexed')}+')'" th:text="${@messages.getMessage(#request, 'abbr.stomach')}">S</abbr>
+                                                        </th>
+                                                        <th class="lf-summ-c lf-summ-u">
+                                                            <abbr th:title="${@messages.getMessage(#request, 'field.frozen')}+'('+${@messages.getMessage(#request, 'field.unsexed')}+')'" th:text="${@messages.getMessage(#request, 'abbr.frozen')}">F</abbr>
+                                                        </th>
+                                                        <th class="lf-summ-w lf-summ-u">
+                                                            <abbr th:title="${@messages.getMessage(#request, 'field.weight')}+'('+${@messages.getMessage(#request, 'field.unsexed')}+')'" th:text="${@messages.getMessage(#request, 'abbr.weight')}">W</abbr>
+                                                        </th>
+                                                        <th class="lf-summ-l lf-summ-m">
+                                                            <abbr th:title="${@messages.getMessage(#request, 'field.male')}" th:utext="${@messages.getMessage(#request, 'abbr.male')}">Male</abbr>
+                                                        </th>
+                                                        <th class="lf-summ-o lf-summ-m">
+                                                            <abbr th:title="${@messages.getMessage(#request, 'field.otolith')}+'('+${@messages.getMessage(#request, 'field.male')}+')'" th:text="${@messages.getMessage(#request, 'abbr.otolith')}">O</abbr>
+                                                        </th>
+                                                        <th class="lf-summ-s lf-summ-m">
+                                                            <abbr th:title="${@messages.getMessage(#request, 'field.stomach')}+'('+${@messages.getMessage(#request, 'field.male')}+')'" th:text="${@messages.getMessage(#request, 'abbr.stomach')}">S</abbr>
+                                                        </th>
+                                                        <th class="lf-summ-c lf-summ-m">
+                                                            <abbr th:title="${@messages.getMessage(#request, 'field.frozen')}+'('+${@messages.getMessage(#request, 'field.male')}+')'" th:text="${@messages.getMessage(#request, 'abbr.frozen')}">F</abbr>
+                                                        </th>
+                                                        <th class="lf-summ-w lf-summ-m">
+                                                            <abbr th:title="${@messages.getMessage(#request, 'field.weight')}+'('+${@messages.getMessage(#request, 'field.male')}+')'" th:text="${@messages.getMessage(#request, 'abbr.weight')}">W</abbr>
+                                                        </th>
+                                                        <th class="lf-summ-l lf-summ-f">
+                                                            <abbr th:title="${@messages.getMessage(#request, 'field.female')}" th:utext="${@messages.getMessage(#request, 'abbr.female')}">Female</abbr>
+                                                        </th>
+                                                        <th class="lf-summ-o lf-summ-f">
+                                                            <abbr th:title="${@messages.getMessage(#request, 'field.otolith')}+'('+${@messages.getMessage(#request, 'field.female')}+')'" th:text="${@messages.getMessage(#request, 'abbr.otolith')}">O</abbr>
+                                                        </th>
+                                                        <th class="lf-summ-s lf-summ-f">
+                                                            <abbr th:title="${@messages.getMessage(#request, 'field.stomach')}+'('+${@messages.getMessage(#request, 'field.female')}+')'" th:text="${@messages.getMessage(#request, 'abbr.stomach')}">S</abbr>
+                                                        </th>
+                                                        <th class="lf-summ-c lf-summ-f">
+                                                            <abbr th:title="${@messages.getMessage(#request, 'field.frozen')}+'('+${@messages.getMessage(#request, 'field.female')}+')'" th:text="${@messages.getMessage(#request, 'abbr.frozen')}">F</abbr>
+                                                        </th>
+                                                        <th class="lf-summ-w lf-summ-f">
+                                                            <abbr th:title="${@messages.getMessage(#request, 'field.weight')}+'('+${@messages.getMessage(#request, 'field.female')}+')'" th:text="${@messages.getMessage(#request, 'abbr.weight')}">W</abbr>
+                                                        </th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody class="lf-summ" id="lf-summ-data-tbody">
+                                                </tbody>
+                                            </table>
+                                            <table class="table table-hover lf-summ lf-summ-totals">
+                                                <tbody style="overflow-y: auto;">
+                                                    <tr>
+                                                        <th class="lf-summ-cm">
+                                                            <abbr th:title="${@messages.getMessage(#request, 'table.header.totals')}">TT</abbr>
+                                                        </th>
+                                                        <td class="lf-summ-u lf-summ-total"><span class="lf-summ-l lf-summ-u">0</span></td>
+                                                        <td class="lf-summ-u lf-summ-total"><span class="lf-summ-o lf-summ-u">0</span></td>
+                                                        <td class="lf-summ-u lf-summ-total"><span class="lf-summ-s lf-summ-u">0</span></td>
+                                                        <td class="lf-summ-u lf-summ-total"><span class="lf-summ-c lf-summ-u">0</span></td>
+                                                        <td class="lf-summ-u lf-summ-total"><span class="lf-summ-w lf-summ-u">0</span></td>
+                                                        <td class="lf-summ-m lf-summ-total"><span class="lf-summ-l lf-summ-m">0</span></td>
+                                                        <td class="lf-summ-m lf-summ-total"><span class="lf-summ-o lf-summ-m">0</span></td>
+                                                        <td class="lf-summ-m lf-summ-total"><span class="lf-summ-s lf-summ-m">0</span></td>
+                                                        <td class="lf-summ-m lf-summ-total"><span class="lf-summ-c lf-summ-m">0</span></td>
+                                                        <td class="lf-summ-m lf-summ-total"><span class="lf-summ-w lf-summ-m">0</span></td>
+                                                        <td class="lf-summ-f lf-summ-total"><span class="lf-summ-l lf-summ-f">0</span></td>
+                                                        <td class="lf-summ-f lf-summ-total"><span class="lf-summ-o lf-summ-f">0</span></td>
+                                                        <td class="lf-summ-f lf-summ-total"><span class="lf-summ-s lf-summ-f">0</span></td>
+                                                        <td class="lf-summ-f lf-summ-total"><span class="lf-summ-c lf-summ-f">0</span></td>
+                                                        <td class="lf-summ-f lf-summ-total"><span class="lf-summ-w lf-summ-f">0</span></td>
+                                                        <td style="width: 1.0em;">&nbsp;</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                            <input type="hidden" id="entriesModified" name="entriesModified" value="false" disabled="disabled" />
+                                            <input type="hidden" id="countsModified" name="countsModified" value="false" disabled="disabled" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </details>
+                    </li>
+                    <li>
+                        <details>
+                            <summary th:utext="${@messages.getMessage(#request, 'page.header.review')}">Review</summary>
+                            <div class="container-fluid">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <label for="comments" th:utext="${@messages.getMessage(#request, 'field.comments')}" class="field-name">Comments</label><br />
+                                        <textarea id="comments" rows="6" class="full-width" th:attr="data-maxlength=${'4000'}" th:field="*{comments}"></textarea>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <label for="verifiedBy" th:utext="${@messages.getMessage(#request, 'field.verified_by')}">Verified by</label><br />
+                                        <select id="verifiedBy" th:field="*{verifiedBy}" class="full-width" th:attr="data-searchable=${'true'}">
+                                            <th:block th:each="user : ${@lookupService.getLookupsByKey(#request, 'enteredBys', true, 'other')}">
+                                                <option th:value="${user.value}" th:utext="${user.text}" th:attr="data-active=${user.active}">Text</option>
+                                            </th:block>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-6" style="display: none;">
+                                        <label for="checkedBy" th:utext="${@messages.getMessage(#request, 'field.checked_by')}">Checked by</label><br />
+                                        <select id="checkedBy" th:field="*{checkedBy}" class="full-width" th:attr="data-searchable=${'true'}" th:disabled="${true}">
+                                            <th:block th:each="user : ${@lookupService.getLookupsByKey(#request, 'enteredBys', true, 'other')}">
+                                                <option th:value="${user.value}" th:utext="${user.text}" th:attr="data-active=${user.active}">Text</option>
+                                            </th:block>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </details>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <section id="modal-keypad" class="wb-overlay modal-content overlay-def wb-popup-full">
+            <header class="modal-header">
+                <h2 class="modal-title" th:utext="${@messages.getMessage(#request, 'btn.field_capture_keypad')}">Middle screen overlay</h2>
+            </header>
+            <div class="modal-body" id="modal-keypad-body" data-keypad-disabled="false">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <span id="lf-summ-keypad-wip" style="display: none; font-size: 150%;" class="label label-danger" th:title="${@messages.getMessage(#request, 'js.state.invalid_operation')}"><label id="wip-label" th:utext="${@messages.getMessage(#request, 'js.label.new')}">New:</label>&nbsp;<span>&nbsp;</span>&nbsp;<span class="glyphicon glyphicon-remove"></span></span>
+                            <div class="btn-group btn-group-justified" style="font-size: 150%; margin-top: 10px;">
+                                <div class="btn-group">
+                                    <input class="full-width" type="text" id="length-cm" readonly="readonly" maxlength="3" th:attr="data-input-op=${'a'}" th:title="${@messages.getMessage(#request, 'field.length')}" />
+                                </div>
+                                <div class="btn-group text-center">
+                                    <!-- MATH OP buttons are hidden but still used by scripts -->
+                                    <div class="btn-group" style="display: none;">
+                                        <button type="button" class="btn btn-primary btn-math-op" th:attr="data-math-op=${'+'}" th:title="${@messages.getMessage(#request, 'label.positive', true)}">+</button>
+                                        <button type="button" class="btn btn-default btn-math-op" th:attr="data-math-op=${'-'}" th:title="${@messages.getMessage(#request, 'label.negative', true)}">-</button>
+                                    </div>
+                                    <!-- End of MATH OP buttons -->
+                                    <input class="full-width" type="text" id="math-op-nbr" value="1" maxlength="3" readonly="readonly" th:attr="data-input-op=${'x'}" th:title="${@messages.getMessage(#request, 'field.repeat_n_times')}"/>
+                                </div>
+                                <div class="btn-group text-right lf-maturity-level-container" style="display: none;">
+                                    <input type="text" class="full-width" id="lf-maturity-level" maxlength="10" readonly="readonly" th:attr="data-input-op=${'d'},data-mask=${'0#'}" th:title="${@messages.getMessage(#request, 'field.maturity_level')}" />
+                                    <button type="button" class="btn btn-link btn-input-search" onclick="lengthFrequency.showMaturityLevelDatalist()">
+                                        <span class="glyphicon glyphicon-search"></span>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="btn-group btn-group-justified">
+                                <div class="btn-group">
+                                    <button type="button" class="btn btn-default btn-keypad" th:attr="data-keypad-op=${'a'}">
+                                        <span class="lf-summ-length-unit">cm</span>(A)
+                                    </button>
+                                </div>
+                                <div class="btn-group">
+                                    <button type="button" class="btn btn-default btn-keypad" th:attr="data-keypad-op=${'x'}">
+                                        <span th:utext="${@messages.getMessage(#request, 'btn.repeat')}">Repeat</span>(X)
+                                    </button>
+                                </div>
+                                <div class="btn-group lf-maturity-level-container">
+                                    <button type="button" class="btn btn-default btn-keypad" th:attr="data-keypad-op=${'d'}">
+                                        <span th:utext="${@messages.getMessage(#request, 'field.maturity_level')}">Maturity</span>(D)
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="btn-group btn-group-justified">
+                                <div class="btn-group">
+                                    <button type="button" class="btn btn-default btn-keypad" data-keypad-op="7">7</button>
+                                </div>
+                                <div class="btn-group">
+                                    <button type="button" class="btn btn-default btn-keypad" data-keypad-op="8">8</button>
+                                </div>
+                                <div class="btn-group">
+                                    <button type="button" class="btn btn-default btn-keypad" data-keypad-op="9">9</button>
+                                </div>
+                            </div>
+                            <div class="btn-group btn-group-justified">
+                                <div class="btn-group">
+                                    <button type="button" class="btn btn-default btn-keypad" data-keypad-op="4">4</button>
+                                </div>
+                                <div class="btn-group">
+                                    <button type="button" class="btn btn-default btn-keypad" data-keypad-op="5">5</button>
+                                </div>
+                                <div class="btn-group">
+                                    <button type="button" class="btn btn-default btn-keypad" data-keypad-op="6">6</button>
+                                </div>
+                            </div>
+                            <div class="btn-group btn-group-justified">
+                                <div class="btn-group">
+                                    <button type="button" class="btn btn-default btn-keypad" data-keypad-op="1">1</button>
+                                </div>
+                                <div class="btn-group">
+                                    <button type="button" class="btn btn-default btn-keypad" data-keypad-op="2">2</button>
+                                </div>
+                                <div class="btn-group">
+                                    <button type="button" class="btn btn-default btn-keypad" data-keypad-op="3">3</button>
+                                </div>
+                            </div>
+                            <div class="btn-group btn-group-justified">
+                                <div class="btn-group">
+                                    <button type="button" class="btn btn-default btn-keypad" data-keypad-op="0">0</button>
+                                </div>
+                                <div class="btn-group">
+                                    <button type="button" class="btn btn-default btn-keypad" data-keypad-op="c" th:utext="${@messages.getMessage(#request, 'btn.reset')}">Reset</button>
+                                </div>
+                                <div class="btn-group">
+                                    <button type="button" class="btn btn-default btn-keypad" data-keypad-op="r">
+                                        <span class="glyphicon glyphicon-chevron-left"></span><span class="glyphicon glyphicon-remove-sign"></span>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="btn-group btn-group-justified" style="margin-bottom: 10px;">
+                                <div class="btn-group">
+                                    <button type="button" style="" th:utext="${@messages.getMessage(#request, 'btn.enter')}" class="btn btn-default btn-keypad" th:attr="data-keypad-op=${'e'}">Enter</button>
+                                </div>
+                            </div>
+                            <div id="lf-maturity-datalist-container" style="display: none;">
+                                <div style="border-radius: 3px;" class="border-primary-thick">
+                                    <div class="container-fluid">
+                                        <div class="row">
+                                            <div class="col-xs-6" style="padding-top: 5px;">
+                                                <span th:utext="${@messages.getMessage(#request, 'field.maturity_codes')}">Maturity codes</span>
+                                            </div>
+                                            <div class="col-xs-6 text-right">
+                                                <button type="button" class="btn btn-link" onclick="$('#lf-maturity-datalist-container').hide()" th:title="${@messages.getMessage(#request, 'btn.close')}"><span class="glyphicon glyphicon-remove"></span></button>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-sm-12">
+                                                <select id="maturityLevels" size="10" class="border-primary full-width">
+                                                    <th:block th:each="mml : ${@lookupService.getLookupsByKey(#request, 'maturities', false)}">
+                                                        <option th:value="${mml.value}" th:utext="${mml.text}" th:attr="data-active=${mml.active}">Text</option>
+                                                    </th:block>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-sm-12">
+                                                <button class="btn btn-primary" type="button" onclick="lengthFrequency.selectMaturityLevel()" th:utext="${@messages.getMessage(#request, 'btn.select')}">Select</button>
+                                                <button class="btn btn-default" type="button" onclick="$('#lf-maturity-datalist-container').hide()" th:utext="${@messages.getMessage(#request, 'btn.close')}">Close</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-8">
+                            <div class="container-fluid">
+                                <div class="row">
+                                    <div class="col-sm-3">
+                                        <table class="table table-hover lf-summ">
+                                            <thead>
+                                            <tr>
+                                                <th colspan="2" th:utext="${@messages.getMessage(#request, 'page.header.history')}">History</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody id="entry-history" style="height: 325px;">
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <div class="col-sm-9">
+                                        <table class="table">
+                                            <thead>
+                                            <tr>
+                                                <th colspan="4" th:utext="${@messages.getMessage(#request, 'page.header.sampling_requirements')}">Sampling requirements</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            <tr>
+                                                <td class="keypad-sampling-summ">
+                                                    <table class="table table-condensed keypad-sampling-summ" id="keypad-sampling-o">
+                                                        <caption>--<span th:utext="${@messages.getMessage(#request, 'field.otolith')}">Otolith</span>--</caption>
+                                                        <thead>
+                                                        <tr>
+                                                            <th th:utext="${@messages.getMessage(#request, 'table.header.group')}">Group</th>
+                                                            <th>
+                                                                <span th:utext="${@messages.getMessage(#request, 'table.header.freq')}">Freq</span>(<span class="keypad-sampling-summ-req-num">0</span>)
+                                                            </th>
+                                                        </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                        <tr class="keypad-sampling-summ-row-1">
+                                                            <td class="keypad-sampling-summ-col-grp">-</td>
+                                                            <td class="keypad-sampling-summ-col-req">-</td>
+                                                        </tr>
+                                                        <tr class="keypad-sampling-summ-row-2">
+                                                            <td class="keypad-sampling-summ-col-grp">-</td>
+                                                            <td class="keypad-sampling-summ-col-req">-</td>
+                                                        </tr>
+                                                        <tr class="keypad-sampling-summ-row-3">
+                                                            <td class="keypad-sampling-summ-col-grp">-</td>
+                                                            <td class="keypad-sampling-summ-col-req">-</td>
+                                                        </tr>
+                                                        <tr class="keypad-sampling-summ-row-4 warning">
+                                                            <td class="keypad-sampling-summ-col-grp">-</td>
+                                                            <td class="keypad-sampling-summ-col-req">-</td>
+                                                        </tr>
+                                                        <tr class="keypad-sampling-summ-row-5">
+                                                            <td class="keypad-sampling-summ-col-grp">-</td>
+                                                            <td class="keypad-sampling-summ-col-req">-</td>
+                                                        </tr>
+                                                        <tr class="keypad-sampling-summ-row-6">
+                                                            <td class="keypad-sampling-summ-col-grp">-</td>
+                                                            <td class="keypad-sampling-summ-col-req">-</td>
+                                                        </tr>
+                                                        <tr class="keypad-sampling-summ-row-7">
+                                                            <td class="keypad-sampling-summ-col-grp">-</td>
+                                                            <td class="keypad-sampling-summ-col-req">-</td>
+                                                        </tr>
+                                                        </tbody>
+                                                    </table>
+                                                </td>
+                                                <td class="keypad-sampling-summ">
+                                                    <table class="table table-condensed keypad-sampling-summ" id="keypad-sampling-s">
+                                                        <caption>--<span th:utext="${@messages.getMessage(#request, 'field.stomach')}">Stomach</span>--</caption>
+                                                        <thead>
+                                                        <tr>
+                                                            <th th:utext="${@messages.getMessage(#request, 'table.header.group')}">Group</th>
+                                                            <th>
+                                                                <span th:utext="${@messages.getMessage(#request, 'table.header.freq')}">Freq</span>(<span class="keypad-sampling-summ-req-num">0</span>)
+                                                            </th>
+                                                        </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                        <tr class="keypad-sampling-summ-row-1">
+                                                            <td class="keypad-sampling-summ-col-grp">-</td>
+                                                            <td class="keypad-sampling-summ-col-req">-</td>
+                                                        </tr>
+                                                        <tr class="keypad-sampling-summ-row-2">
+                                                            <td class="keypad-sampling-summ-col-grp">-</td>
+                                                            <td class="keypad-sampling-summ-col-req">-</td>
+                                                        </tr>
+                                                        <tr class="keypad-sampling-summ-row-3">
+                                                            <td class="keypad-sampling-summ-col-grp">-</td>
+                                                            <td class="keypad-sampling-summ-col-req">-</td>
+                                                        </tr>
+                                                        <tr class="keypad-sampling-summ-row-4 warning">
+                                                            <td class="keypad-sampling-summ-col-grp">-</td>
+                                                            <td class="keypad-sampling-summ-col-req">-</td>
+                                                        </tr>
+                                                        <tr class="keypad-sampling-summ-row-5">
+                                                            <td class="keypad-sampling-summ-col-grp">-</td>
+                                                            <td class="keypad-sampling-summ-col-req">-</td>
+                                                        </tr>
+                                                        <tr class="keypad-sampling-summ-row-6">
+                                                            <td class="keypad-sampling-summ-col-grp">-</td>
+                                                            <td class="keypad-sampling-summ-col-req">-</td>
+                                                        </tr>
+                                                        <tr class="keypad-sampling-summ-row-7">
+                                                            <td class="keypad-sampling-summ-col-grp">-</td>
+                                                            <td class="keypad-sampling-summ-col-req">-</td>
+                                                        </tr>
+                                                        </tbody>
+                                                    </table>
+                                                </td>
+                                                <td class="keypad-sampling-summ">
+                                                    <table class="table table-condensed keypad-sampling-summ" id="keypad-sampling-c">
+                                                        <caption>--<span th:utext="${@messages.getMessage(#request, 'field.frozen')}">Frozen</span>--</caption>
+                                                        <thead>
+                                                        <tr>
+                                                            <th th:utext="${@messages.getMessage(#request, 'table.header.group')}">Group</th>
+                                                            <th>
+                                                                <span th:utext="${@messages.getMessage(#request, 'table.header.freq')}">Freq</span>(<span class="keypad-sampling-summ-req-num">0</span>)
+                                                            </th>
+                                                        </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                        <tr class="keypad-sampling-summ-row-1">
+                                                            <td class="keypad-sampling-summ-col-grp">-</td>
+                                                            <td class="keypad-sampling-summ-col-req">-</td>
+                                                        </tr>
+                                                        <tr class="keypad-sampling-summ-row-2">
+                                                            <td class="keypad-sampling-summ-col-grp">-</td>
+                                                            <td class="keypad-sampling-summ-col-req">-</td>
+                                                        </tr>
+                                                        <tr class="keypad-sampling-summ-row-3">
+                                                            <td class="keypad-sampling-summ-col-grp">-</td>
+                                                            <td class="keypad-sampling-summ-col-req">-</td>
+                                                        </tr>
+                                                        <tr class="keypad-sampling-summ-row-4 warning">
+                                                            <td class="keypad-sampling-summ-col-grp">-</td>
+                                                            <td class="keypad-sampling-summ-col-req">-</td>
+                                                        </tr>
+                                                        <tr class="keypad-sampling-summ-row-5">
+                                                            <td class="keypad-sampling-summ-col-grp">-</td>
+                                                            <td class="keypad-sampling-summ-col-req">-</td>
+                                                        </tr>
+                                                        <tr class="keypad-sampling-summ-row-6">
+                                                            <td class="keypad-sampling-summ-col-grp">-</td>
+                                                            <td class="keypad-sampling-summ-col-req">-</td>
+                                                        </tr>
+                                                        <tr class="keypad-sampling-summ-row-7">
+                                                            <td class="keypad-sampling-summ-col-grp">-</td>
+                                                            <td class="keypad-sampling-summ-col-req">-</td>
+                                                        </tr>
+                                                        </tbody>
+                                                    </table>
+                                                </td>
+                                                <td class="keypad-sampling-summ">
+                                                    <table class="table table-condensed keypad-sampling-summ" id="keypad-sampling-w">
+                                                        <caption>--<span th:utext="${@messages.getMessage(#request, 'field.weight')}">Weight</span>--</caption>
+                                                        <thead>
+                                                        <tr>
+                                                            <th th:utext="${@messages.getMessage(#request, 'table.header.group')}">Group</th>
+                                                            <th>
+                                                                <span th:utext="${@messages.getMessage(#request, 'table.header.freq')}">Freq</span>(<span class="keypad-sampling-summ-req-num">0</span>)
+                                                            </th>
+                                                        </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                        <tr class="keypad-sampling-summ-row-1">
+                                                            <td class="keypad-sampling-summ-col-grp">-</td>
+                                                            <td class="keypad-sampling-summ-col-req">-</td>
+                                                        </tr>
+                                                        <tr class="keypad-sampling-summ-row-2">
+                                                            <td class="keypad-sampling-summ-col-grp">-</td>
+                                                            <td class="keypad-sampling-summ-col-req">-</td>
+                                                        </tr>
+                                                        <tr class="keypad-sampling-summ-row-3">
+                                                            <td class="keypad-sampling-summ-col-grp">-</td>
+                                                            <td class="keypad-sampling-summ-col-req">-</td>
+                                                        </tr>
+                                                        <tr class="keypad-sampling-summ-row-4 warning">
+                                                            <td class="keypad-sampling-summ-col-grp">-</td>
+                                                            <td class="keypad-sampling-summ-col-req">-</td>
+                                                        </tr>
+                                                        <tr class="keypad-sampling-summ-row-5">
+                                                            <td class="keypad-sampling-summ-col-grp">-</td>
+                                                            <td class="keypad-sampling-summ-col-req">-</td>
+                                                        </tr>
+                                                        <tr class="keypad-sampling-summ-row-6">
+                                                            <td class="keypad-sampling-summ-col-grp">-</td>
+                                                            <td class="keypad-sampling-summ-col-req">-</td>
+                                                        </tr>
+                                                        <tr class="keypad-sampling-summ-row-7">
+                                                            <td class="keypad-sampling-summ-col-grp">-</td>
+                                                            <td class="keypad-sampling-summ-col-req">-</td>
+                                                        </tr>
+                                                        </tbody>
+                                                    </table>
+                                                </td>
+                                            </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <h3 class="page-header" style="margin-top: 5px!important;" th:utext="${@messages.getMessage(#request, 'page.header.sampling_options')}">Sampling options</h3>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="btn-group btn-group-justified" style="margin-top: 5px;">
+                                <div class="btn-group lf-summ-u" style="display: none;">
+                                    <button type="button" th:attr="data-selection=${'u'}" class="btn btn-default lf-summ-gnd-btn">
+                                        <span th:utext="${@messages.getMessage(#request, 'field.unsexed')}">Unsexed</span>&nbsp;(U)
+                                    </button>
+                                </div>
+                                <div class="btn-group lf-summ-m" style="display: none;">
+                                    <button type="button" th:attr="data-selection=${'m'}" class="btn btn-default lf-summ-gnd-btn">
+                                        <span th:utext="${@messages.getMessage(#request, 'field.male')}">Male</span>&nbsp;(M)
+                                    </button>
+                                </div>
+                                <div class="btn-group lf-summ-f" style="display: none;">
+                                    <button type="button" th:attr="data-selection=${'f'}" class="btn btn-default lf-summ-gnd-btn">
+                                        <span th:utext="${@messages.getMessage(#request, 'field.female')}">Female</span>&nbsp;(F)
+                                    </button>
+                                </div>
+                            </div>
+                            <br />
+                            <div class="btn-group btn-group-justified">
+                                <div class="btn-group">
+                                    <button type="button" th:attr="data-selection=${'_g'}" class="btn btn-default lf-summ-smp-btn">
+                                        <span class="glyphicon glyphicon-unchecked"></span>&nbsp;&nbsp;<span th:utext="${@messages.getMessage(#request, 'field.length')}">Length</span>&nbsp;(L)
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="btn-group btn-group-justified">
+                                <div class="btn-group">
+                                    <button type="button" th:attr="data-selection=${'_o'}" class="btn btn-default lf-summ-smp-btn">
+                                        <span class="glyphicon glyphicon-unchecked"></span>&nbsp;&nbsp;<span th:utext="${@messages.getMessage(#request, 'field.otolith')}">Otolith</span>&nbsp;(O)
+                                    </button>
+                                </div>
+                                <div class="btn-group">
+                                    <button type="button" th:attr="data-selection=${'_s'}" class="btn btn-default lf-summ-smp-btn">
+                                        <span class="glyphicon glyphicon-unchecked"></span>&nbsp;&nbsp;<span th:utext="${@messages.getMessage(#request, 'field.stomach')}">Stomach</span>&nbsp;(S)
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="btn-group btn-group-justified" style="margin-bottom: 8px;">
+                                <div class="btn-group">
+                                    <button type="button" th:attr="data-selection=${'_c'}" class="btn btn-default lf-summ-smp-btn">
+                                        <span class="glyphicon glyphicon-unchecked"></span>&nbsp;&nbsp;<span th:utext="${@messages.getMessage(#request, 'field.frozen')}">Frozen</span>&nbsp;(C)
+                                    </button>
+                                </div>
+                                <div class="btn-group">
+                                    <button type="button" th:attr="data-selection=${'_w'}" class="btn btn-default lf-summ-smp-btn">
+                                        <span class="glyphicon glyphicon-unchecked"></span>&nbsp;&nbsp;<span th:utext="${@messages.getMessage(#request, 'field.weight')}">Weight</span>&nbsp;(W)
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-8">
+                            <section id="no-sampling-data-alert" class="alert alert-info">
+                                <p th:utext="${@messages.getMessage(#request, 'info.no_sampling_data_required')}">No data needed</p>
+                            </section>
+                            <th:block th:replace="layouts/lengthFrequency :: individualSamplingData" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </th:block>
+
+    <th:block th:fragment="individualSamplingData" th:with="idToUse=${sectionId != null ? sectionId : 'sampling-data'},renderOtolithSection=${renderOtolith != null ? renderOtolith : false}">
+        <section th:id="${idToUse}" class="container-fluid">
+            <div class="row mrgn-bttm-md" id="ind-id-row">
+                <div class="col-md-6">
+                    <label for="sampleData_fieldNbr" th:utext="${@messages.getMessage(#request, 'field.field_nbr')}">Field No.</label><br />
+                    <input type="text" class="full-width" id="sampleData_fieldNbr" readonly="readonly" data-force-readonly="true" />
+                </div>
+                <div class="col-md-3">
+                    <label for="sampleData_storageNbr" th:utext="${@messages.getMessage(#request, 'field.storage_nbr')}">Storage No.</label><br />
+                    <input type="text" class="full-width" id="sampleData_storageNbr" readonly="readonly" data-force-readonly="true" />
+                    <input type="hidden" id="sampleData_samplingDataId" />
+                </div>
+                <div class="col-md-3">
+                    <label for="sampleData_tag" th:utext="${@messages.getMessage(#request, 'field.tag')}">Tag</label><br />
+                    <input type="text" id="sampleData_tag" class="full-width" maxlength="10" />
+                </div>
+                <br />
+            </div>
+            <div class="row" id="ind-data-row">
+                <div class="col-md-12">
+                    <ul class="list-unstyled" id="sampling-data-more">
+                        <li th:if="${renderOtolithSection}">
+                            <details>
+                                <summary th:utext="${@messages.getMessage(#request, 'field.otolith')}">Otolith</summary>
+                                <div class="container-fluid">
+                                    <div class="row mrgn-bttm-md">
+                                        <div class="col-md-6">
+                                            <label for="sampleData_otolithEdgeId" th:utext="${@messages.getMessage(#request, 'field.otolith_edge')}">Edge</label><br />
+                                            <select id="sampleData_otolithEdgeId" class="full-width">
+                                                <th:block th:each="edge : ${@lookupService.getLookupsByKey(#request, 'otolithEdges', true)}">
+                                                    <option th:value="${edge.value}" th:utext="${edge.text}" th:attr="data-active=${edge.active}">Option</option>
+                                                </th:block>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label for="sampleData_otolithReliabilityId" th:utext="${@messages.getMessage(#request, 'field.otolith_reliability')}">Reliability</label><br />
+                                            <select id="sampleData_otolithReliabilityId" class="full-width">
+                                                <th:block th:each="rel : ${@lookupService.getLookupsByKey(#request, 'otolithReliabilities', true)}">
+                                                    <option th:value="${rel.value}" th:utext="${rel.text}">Option</option>
+                                                </th:block>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <label for="sampleData_age" th:utext="${@messages.getMessage(#request, 'field.age')}">Age</label>
+                                            <br/>
+                                            <input type="number" id="sampleData_age" class="full-width" data-default="0" min="0" oninput="app.validateIsNumber(this);app.validateLengthOfNumber(this, 9)"/>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label for="sampleData_eggDiameter" th:utext="${@messages.getMessage(#request, 'field.egg_diameter')}">Egg diameter</label> (mm)
+                                            <br/>
+                                            <input type="number" id="sampleData_eggDiameter" class="full-width" min="0" max="9" data-default="0" oninput="app.validateIsFloat(this);app.validateLengthOfNumber(this, 1)"/>
+                                        </div>
+                                    </div>
+                                </div>
+                            </details>
+                        </li>
+                        <li>
+                            <details>
+                                <summary th:utext="${@messages.getMessage(#request, 'field.weight')}">Weight</summary>
+                                <div class="container-fluid">
+                                    <div class="row mrgn-bttm-md">
+                                        <div class="col-md-4">
+                                            <label for="sampleData_roundWt" th:utext="${@messages.getMessage(#request, 'field.round_weight')}">Round</label>(kg)<br />
+                                            <input type="text" id="sampleData_roundWt" class="full-width" data-mask="0ZZPZZZ" data-mask-placeholder="000.000" data-mask-translation='{"Z":{"pattern":"[0-9]","optional":"true"},"P":{"pattern":".","optional":"true"}}' />
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label for="sampleData_guttedWt" th:utext="${@messages.getMessage(#request, 'field.gutted_weight')}">Gutted</label>(kg)<br />
+                                            <input type="text" id="sampleData_guttedWt" class="full-width" data-mask="0ZZPZZZ" data-mask-placeholder="000.000" data-mask-translation='{"Z":{"pattern":"[0-9]","optional":"true"},"P":{"pattern":".","optional":"true"}}' />
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label for="sampleData_ggWt" th:utext="${@messages.getMessage(#request, 'field.gg_weight')}">Gutted&amp;gilled</label>(kg)<br />
+                                            <input type="text" id="sampleData_ggWt" class="full-width" data-mask="0ZZPZZZ" data-mask-placeholder="000.000" data-mask-translation='{"Z":{"pattern":"[0-9]","optional":"true"},"P":{"pattern":".","optional":"true"}}' />
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-3">
+                                            <label for="sampleData_gonadWt" th:utext="${@messages.getMessage(#request, 'field.gonad_weight')}">Gonad</label>(g)
+                                            <br/>
+                                            <input type="number" id="sampleData_gonadWt" class="full-width" max="1000000000" />
+                                        </div>
+
+                                        <div class="col-md-3">
+                                            <label for="sampleData_liverWt" th:utext="${@messages.getMessage(#request, 'field.liver_weight')}">Liver</label>(g)
+                                        <br/>
+                                            <input type="number" id="sampleData_liverWt" class="full-width" max="1000000000" />
+                                        </div>
+
+                                        <div class="col-md-3">
+                                            <label for="sampleData_gutsWt" th:utext="${@messages.getMessage(#request, 'field.guts_weight')}">Guts/Remnant</label>(g)
+                                            <br/>
+                                            <input type="number" id="sampleData_gutsWt" class="full-width" max="1000000000" />
+                                        </div>
+
+                                        <div class="col-md-3">
+                                            <label for="sampleData_stomachWt" th:utext="${@messages.getMessage(#request, 'field.stomach')}">Stomach</label>(g)
+                                            <br/>
+                                            <input type="number" id="sampleData_stomachWt" class="full-width" max="1000000000" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </details>
+                        </li>
+                        <li>
+                            <details>
+                                <summary th:utext="${@messages.getMessage(#request, 'field.stomach')}">Stomach</summary>
+                                <div class="container-fluid">
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <label for="sampleData_fullness" th:utext="${@messages.getMessage(#request, 'field.fullness')}">Fullness</label><br />
+                                            <input type="number" id="sampleData_fullness" class="full-width" min="0" max="9" data-default="0" oninput="app.validateIsNumber(this);app.validateLengthOfNumber(this,1)"/>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label for="sampleData_parasiteId" th:utext="${@messages.getMessage(#request, 'field.parasite')}">Parasite</label><br />
+                                            <select id="sampleData_parasiteId" class="full-width" data-default="0">
+                                                <th:block th:each="parasite : ${@lookupService.getLookupsByKey(#request, 'parasites', true)}">
+                                                    <option th:value="${parasite.value}" th:utext="${parasite.text}" th:attr="data-active=${parasite.active}">Text</option>
+                                                </th:block>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label for="sampleData_nbrOfParasites" th:utext="${@messages.getMessage(#request, 'field.nbr_of_parasites')}">Num parasites</label><br />
+                                            <input type="number" id="sampleData_nbrOfParasites" class="full-width" min="0" data-default="0"  oninput="app.validateIsNumber(this);app.validateLengthOfNumber(this,9)"/>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <label for="sampleData_primaryStomachContentId" th:utext="${@messages.getMessage(#request, 'field.primary_stomach_contents')}">Primary contents</label><br />
+                                            <select id="sampleData_primaryStomachContentId" class="full-width" data-default="0" data-searchable="true">
+                                                <th:block th:each="sc : ${@lookupService.getLookupsByKey(#request, 'stomachContents', true)}">
+                                                    <option th:value="${sc.value}" th:utext="${sc.text}" th:attr="data-active=${sc.active}">Text</option>
+                                                </th:block>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label for="sampleData_secondaryStomachContentId" th:utext="${@messages.getMessage(#request, 'field.secondary_stomach_contents')}">Secondary contents</label><br />
+                                            <select id="sampleData_secondaryStomachContentId" class="full-width" data-default="0" data-searchable="true">
+                                                <th:block th:each="sc : ${@lookupService.getLookupsByKey(#request, 'stomachContents', true)}">
+                                                    <option th:value="${sc.value}" th:utext="${sc.text}" th:attr="data-active=${sc.active}">Text</option>
+                                                </th:block>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </details>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+    </th:block>
+</body>
+</html>

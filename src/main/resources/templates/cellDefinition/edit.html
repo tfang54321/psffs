@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{__${'layouts/intranet-layout-'+layoutMode}__}">
+<head>
+    <title th:utext="#{page.cell_definitions.edit}"></title>
+</head>
+<body>
+    <th:block layout:fragment="content">
+        <h3 th:utext="#{page.cell_definitions.edit}">Title</h3>
+        <section th:if="${makeFormReadOnly}" class="alert alert-info" onclick="$(this).hide()">
+            <p th:utext="${readOnlyMessage}"></p>
+        </section>
+        <div id="displayActivate"></div>
+        <br />
+        <div class="wb-frmvld">
+            <form th:action="@{__${'/'+pageLang+T(ca.gc.dfo.psffs.controllers.CellDefinitionsController).CELL_DEFINITIONS_EDIT_PATH}__}" th:method="POST" th:object="${cellDefinitionForm}" id="cdEditForm">
+                <div class="row">
+                    <div class="col-md-12">
+                        <th:block th:replace="layouts/cellDefinition :: cellDefForm(renderCellId=${true})" />
+                        <!-- Insert Buttons Here -->
+                        <br />
+                        <button id="cdSubmit" type="submit" class="btn btn-primary" th:utext="#{btn.save}">Save</button>
+                        <button th:if="${markActive}" type="button" id="btnActivate" class="btn btn-success" onclick="cellDefinition.makeActive()">
+                            <span th:utext="#{btn.mark_active}">Mark as Active</span>
+                        </button>
+                        <input type="reset" id="btnReset" class="btn btn-default" th:value="${@messages.getMessage('btn.reset', true)}" />
+                        <button type="button" class="btn btn-default bc-back" id="cdEditCancel" th:utext="#{btn.cancel}">Cancel</button>
+                        <br /><br />
+                    </div>
+                </div>
+            </form>
+        </div>
+    </th:block>
+    <!-- 	Global Layout JS -->
+    <th:block layout:fragment="scripts">
+        <script th:inline="javascript">
+            var readOnlyForm = /*[[@{__${makeFormReadOnly}__}]]*/'';
+            var editId = /*[[@{__${editId}__}]]*/'';
+            var activePath = /*[[@{__${'/'+pageLang+T(ca.gc.dfo.psffs.controllers.CellDefinitionsController).CELL_DEFINITIONS_ACTIVE_PATH}__}]]*/'';
+        </script>
+        <script th:src="@{/js/cellDefinition.js}" type="text/javascript"></script>
+    </th:block>
+</body>
+</html>

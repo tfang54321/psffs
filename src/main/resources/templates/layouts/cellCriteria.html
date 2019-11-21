@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+<head></head>
+<body>
+    <th:block th:fragment="cellCriteria" th:with="isReportMode=${reportMode != null ? reportMode : false},isTextOnly=${textOnly != null ? textOnly : false}">
+        <div class="container-fluid" th:with="gType=${isReportMode ? 'xs':'md'},idSuffix=${isTextOnly ? '_txt' : ''}">
+            <div class="row">
+                <div th:class="${'col-'+gType+'-4'}">
+                    <label th:for="${'cellCriteria_year'+idSuffix}" class="required">
+                        <span class="field-name" th:utext="#{field.year}">Year</span>
+                        <strong class="required" th:utext="#{form.required}">required</strong>
+                    </label><br />
+                    <select th:id="${'cellCriteria_year'+idSuffix}" th:field="*{year}" class="full-width" required="required" th:disabled="${controlDisabled}" th:attr="data-text-only=${isTextOnly}">
+                        <th:block th:each="year : ${@lookupService.getLookupsByKey('years', true)}">
+                            <option th:value="${year.value}" th:utext="${year.text}">Text</option>
+                        </th:block>
+                    </select>
+                </div>
+                <div th:class="${'col-'+gType+'-8'}">
+                    <label th:for="${'cellCriteria_sampleSpecies'+idSuffix}" class="required">
+                        <span class="field-name" th:utext="#{form.field.sample_species}">Sample species</span>
+                        <strong class="required" th:utext="#{form.required}">required</strong>
+                    </label><br />
+                    <select th:id="${'cellCriteria_sampleSpecies'+idSuffix}" th:field="*{sampleSpeciesId}" class="full-width" required="required" th:attr="data-searchable=${not isTextOnly},data-text-only=${isTextOnly}" th:disabled="${controlDisabled}">
+                        <th:block th:each="species : ${@lookupService.getLookupsByKey('species', true)}">
+                            <option th:value="${species.value}" th:utext="${species.text}">Text</option>
+                        </th:block>
+                    </select>
+                </div>
+            </div>
+            <div class="row"><div class="col-md-12"><hr /></div></div>
+            <div class="row">
+                <div th:class="${'col-'+gType+'-4'}">
+                    <label th:for="${'cellCriteria_dataSourceId'+idSuffix}" class="field-name" th:utext="#{field.data_source}">Data Source</label><br />
+                    <select th:id="${'cellCriteria_dataSourceId'+idSuffix}" th:field="*{dataSourceId}" class="full-width" th:disabled="${controlDisabled}" th:attr="data-text-only=${isTextOnly}">
+                        <option value="" th:utext="#{select.opt.any}">--Any--</option>
+                        <option th:if="${isReportMode}" value="0" th:utext="#{select.opt.not_used}">--Not used--</option>
+                        <th:block th:each="ds : ${@lookupService.getLookupsByKey('dataSources', false)}">
+                            <option th:value="${ds.value}" th:utext="${ds.text}">Text</option>
+                        </th:block>
+                    </select>
+                </div>
+                <div th:class="${'col-'+gType+'-4'}">
+                    <label th:for="${'cellCriteria_bycatchInd'+idSuffix}" class="field-name" th:utext="#{field.bycatch}">Bycatch</label><br />
+                    <select th:id="${'cellCriteria_bycatchInd'+idSuffix}" th:field="*{bycatchInd}" class="full-width" th:disabled="${controlDisabled}" th:attr="data-text-only=${isTextOnly}">
+                        <option value="" th:utext="#{select.opt.any}">--Any--</option>
+                        <option th:if="${isReportMode}" value="0" th:utext="#{select.opt.not_used}">--Not used--</option>
+                        <th:block th:each="yn : ${@lookupService.getLookupsByKey('yesOrNo', false)}">
+                            <option th:value="${yn.value}" th:utext="${yn.text}">Text</option>
+                        </th:block>
+                    </select>
+                </div>
+                <div th:class="${'col-'+gType+'-4'}">
+                    <label th:for="${'cellCriteria_country'+idSuffix}" class="field-name" th:utext="#{field.country}">Country</label><br />
+                    <select th:id="${'cellCriteria_country'+idSuffix}" th:field="*{countryId}" class="full-width" th:disabled="${controlDisabled}" th:attr="data-text-only=${isTextOnly},data-searchable=${not isTextOnly}">
+                        <option value="" th:utext="#{select.opt.any}">--Any--</option>
+                        <option th:if="${isReportMode}" value="0" th:utext="#{select.opt.not_used}">--Not used--</option>
+                        <th:block th:each="country : ${@lookupService.getLookupsByKey('countries', false)}">
+                            <option th:value="${country.value}" th:utext="${country.text}">Text</option>
+                        </th:block>
+                    </select>
+                </div>
+                <div th:class="${'col-'+gType+'-4'}">
+                    <label th:for="${'cellCriteria_quarter'+idSuffix}" class="field-name" th:utext="#{field.quarter}">Quarter</label><br />
+                    <select th:id="${'cellCriteria_quarter'+idSuffix}" th:field="*{quarterId}" class="full-width" th:disabled="${controlDisabled}" th:attr="data-text-only=${isTextOnly}">
+                        <option value="" th:utext="#{select.opt.any}">--Any--</option>
+                        <option th:if="${isReportMode}" value="0" th:utext="#{select.opt.not_used}">--Not used--</option>
+                        <optgroup th:attr="label=#{select.optgroup.offshore}">
+                            <th:block th:each="oQuarter : ${@lookupService.getLookupsByKey('offshoreQuarters', false)}">
+                                <option th:value="${oQuarter.value.substring(0, oQuarter.value.indexOf(';'))}" th:utext="${oQuarter.text}">Text</option>
+                            </th:block>
+                        </optgroup>
+                        <optgroup th:attr="label=#{select.optgroup.inshore}">
+                            <th:block th:each="iQuarter : ${@lookupService.getLookupsByKey('inshoreQuarters', false)}">
+                                <option th:value="${iQuarter.value.substring(0, iQuarter.value.indexOf(';'))}" th:utext="${iQuarter.text}">Text</option>
+                            </th:block>
+                        </optgroup>
+                    </select>
+                </div>
+                <div th:class="${'col-'+gType+'-4'}">
+                    <label th:for="${'cellCriteria_nafo'+idSuffix}" class="field-name" th:utext="#{field.nafo_division}">Nafo division</label><br />
+                    <select th:id="${'cellCriteria_nafo'+idSuffix}" th:field="*{nafoDivisionId}" class="full-width" th:disabled="${controlDisabled}" th:attr="data-text-only=${isTextOnly}">
+                        <option value="" th:utext="#{select.opt.any}">--Any--</option>
+                        <option th:if="${isReportMode}" value="0" th:utext="#{select.opt.not_used}">--Not used--</option>
+                        <th:block th:each="nafo : ${@lookupService.getLookupsByKey('nafoDivisions', false)}">
+                            <option th:value="${nafo.value}" th:utext="${nafo.text}">Text</option>
+                        </th:block>
+                    </select>
+                </div>
+                <div th:class="${'col-'+gType+'-4'}">
+                    <label th:for="${'cellCriteria_unitAreaData'+idSuffix}" class="field-name" th:utext="#{field.unit_area}">Unit area</label><br />
+                    <select th:id="${'cellCriteria_unitAreaData'+idSuffix}" th:field="*{unitAreaData}" class="full-width" th:disabled="${true}" th:attr="data-text-only=${isTextOnly}">
+                        <option value="" th:utext="#{select.opt.any}">--Any--</option>
+                        <option th:if="${isReportMode}" value="0" th:utext="#{select.opt.not_used}">--Not used--</option>
+                        <th:block th:each="unit : ${@lookupService.getLookupsByKey('unitAreas', false)}">
+                            <option th:value="${unit.value}" th:utext="${unit.text}">Text</option>
+                        </th:block>
+                    </select>
+                </div>
+                <div th:class="${'col-'+gType+'-4'}">
+                    <label th:for="${'cellCriteria_lengthCategoryId'+idSuffix}" class="field-name" th:utext="#{field.vessel_length_category}">Vessel Length Category</label><br />
+                    <select th:id="${'cellCriteria_lengthCategoryId'+idSuffix}" th:field="*{vesselLengthCategoryId}" class="full-width" th:disabled="${controlDisabled}" th:attr="data-text-only=${isTextOnly}">
+                        <option value="" th:utext="#{select.opt.any}">--Any--</option>
+                        <option th:if="${isReportMode}" value="0" th:utext="#{select.opt.not_used}">--Not used--</option>
+                        <th:block th:each="lc : ${@lookupService.getLookupsByKey('lengthCategories', false)}">
+                            <option th:value="${lc.value.substring(0, lc.value.indexOf(';'))}" th:utext="${lc.text}">Text</option>
+                        </th:block>
+                    </select>
+                </div>
+                <div th:class="${'col-'+gType+'-4'}">
+                    <label th:for="${'cellCriteria_gear'+idSuffix}" class="field-name" th:utext="#{field.gear}">Gear</label><br />
+                    <select th:id="${'cellCriteria_gear'+idSuffix}" th:field="*{gearId}" class="full-width" th:disabled="${controlDisabled}" th:attr="data-text-only=${isTextOnly},data-searchable=${not isTextOnly}">
+                        <option value="" th:utext="#{select.opt.any}">--Any--</option>
+                        <option th:if="${isReportMode}" value="0" th:utext="#{select.opt.not_used}">--Not used--</option>
+                        <th:block th:each="gear : ${@lookupService.getLookupsByKey('gears', false)}">
+                            <option th:value="${gear.value}" th:utext="${gear.text}">Text</option>
+                        </th:block>
+                    </select>
+                </div>
+                <div th:class="${'col-'+gType+'-4'}">
+                    <label th:for="${'cellCriteria_meshSizeMillimeters'+idSuffix}" class="field-name" th:utext="#{field.mesh_size}">Mesh size</label> (mm)<br />
+                    <input type="number" th:id="${'cellCriteria_meshSizeMillimeters'+idSuffix}" th:field="*{meshSizeMillimeters}"
+                           th:placeholder="#{select.opt.any}" class="full-width" min="0" oninput="app.validateIsNumber(this)" th:disabled="${controlDisabled}" th:attr="data-text-only=${isTextOnly}" />
+                </div>
+            </div>
+            <div class="row" th:if="${not isReportMode}">
+                <div class="col-md-4">
+                    <label for="cellCriteria_observerCompanyId" class="field-name" th:utext="#{field.observer_company}">Observer company</label><br />
+                    <select id="cellCriteria_observerCompanyId" th:field="*{observerCompanyId}" class="full-width" th:disabled="${controlDisabled}" th:attr="data-text-only=${isTextOnly},data-searchable=${not isTextOnly}">
+                        <option value="" th:utext="#{select.opt.any}">--Any--</option>
+                        <th:block th:each="oc : ${@lookupService.getLookupsByKey('observerCompanies', false)}">
+                            <option th:value="${oc.value}" th:utext="${oc.text}">Text</option>
+                        </th:block>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </th:block>
+</body>
+</html>

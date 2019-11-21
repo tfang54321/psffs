@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+<head></head>
+<body>
+<th:block th:fragment="cellDefForm" th:with="renderId=${renderCellId != null ? renderCellId : true}">
+    <section th:if="${successMessage != null}" class="alert alert-success"  onclick="$(this).hide()">
+        <p th:text="${successMessage}"></p>
+    </section>
+    <section th:if="${uniqueCellDef != null}" class="alert alert-danger"  onclick="$(this).hide()">
+        <p th:text="${uniqueCellDef}"></p>
+    </section>
+    <div class="panel panel-primary">
+        <header class="panel-heading">
+            <h3 class="panel-title" th:utext="#{page.cell_definitions}">Title</h3>
+        </header>
+        <div class="panel-body">
+            <section class="container-fluid">
+                <div class="row">
+                    <div class="col-md-7 mrgn-bttm-md">
+                        <div th:if="${renderId}" class="row mrgn-bttm-md">
+                            <div class="col-md-6">
+                                <label for="cdId" th:utext="#{field.cell_definition_id}">Cell Definition Id</label>
+                                <br/>
+                                <input type="text" id="cdId" th:field="*{id}" th:attr="data-text-only=${'true'}"/>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="cdStatus" th:utext="#{form.field.status}">Status</label>
+                                <br/>
+                                <input type="text" id="cdStatus" th:field="*{statusStr}" th:attr="data-text-only=${'true'}" />
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <label for="cdYear" class="required">
+                                    <span class="field-name" th:utext="#{field.year}">Year</span>
+                                    <strong class="required" th:utext="#{form.required}">(required)</strong>
+                                </label>
+                                <br/>
+                                <select class="input-sm" id="cdYear" th:field="*{year}" required="required">
+                                    <option value="" th:utext="#{select.opt.please_select}"></option>
+                                    <th:block th:each="years : ${years}">
+                                        <option th:value="${years}" th:utext="${years}">Text</option>
+                                    </th:block>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="sampleSpeciesId" class="required">
+                                    <span class="field-name" th:utext="#{page.settings.special_tables.species}">Species</span>
+                                    <strong class="required" th:utext="#{form.required}">(required)</strong>
+                                </label>
+                                <br/>
+                                <select th:class="full-width" id="sampleSpeciesId" th:field="*{speciesId}" th:attr="data-searchable=${'true'}" required="required">
+                                    <th:block th:each="species : ${@lookupService.getLookupsByKey('species', true)}">
+                                        <option th:value="${species.value}" th:utext="${species.text}" th:attr="data-active=${species.active}">Text</option>
+                                    </th:block>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-5">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <label for="cdDesc">
+                                    <span class="field-name" th:utext="#{field.description}">Description</span>
+                                </label>
+                                <br/>
+                                <textarea class="full-width" th:field="*{desc}" id="cdDesc" rows="4" th:attr="data-maxlength=${'1000'}"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row"><div class="col-md-12"><hr /></div></div>
+                <div class="row col-md-6">
+                    <div class=" row col-md-12">
+                        <h4 class="no-mar-top">
+                            <span th:utext="#{form.header.cell_criteria_requirements}">Cell Criteria Requirements</span>
+                            <strong class="required-color" th:utext="#{form.all_required}">(required)</strong>
+                        </h4>
+                        <div class="row row-margin-left">
+                            <div class="col-md-6 mrgn-bttm-md">
+                                <label for="cdDataSourceY" th:class="required">
+                                    <span class="field-name" th:utext="#{field.data_source}">Data Source</span>
+                                </label>
+                                <br/>
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <label><input type="radio" name="datasource" th:field="*{dataSource}" required="required" th:value="${1}" id="cdDataSourceY"/><span th:utext="#{field.yes}">Yes</span></label>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label><input type="radio" name="datasource" th:field="*{dataSource}" required="required" th:value="${0}" id="cdDataSourceN"/><span th:utext="#{field.no}">No</span></label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6 mrgn-bttm-md">
+                                <label for="cdByCatchY" th:class="required">
+                                    <span class="field-name" th:utext="#{field.bycatch}">Bycatch</span>
+                                </label>
+                                <br/>
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <label><input type="radio" name="byCatch" th:field="*{byCatch}" required="required" th:value="${1}" id="cdByCatchY"/><span th:utext="#{field.yes}">Yes</span></label>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label><input type="radio" name="byCatch" th:field="*{byCatch}" required="required" th:value="${0}" id="cdByCatchN"/><span th:utext="#{field.no}">No</span></label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6 mrgn-bttm-md">
+                                <label for="cdCountryY" th:class="required">
+                                    <span class="field-name" th:utext="#{field.country}">Quota</span>
+                                </label>
+                                <br/>
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <label><input type="radio" name="country" th:field="*{country}" required="required" th:value="${1}" id="cdCountryY"/><span th:utext="#{field.yes}">Yes</span></label>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label><input type="radio" name="country" th:field="*{country}" required="required" th:value="${0}" id="cdCountryN"/><span th:utext="#{field.no}">No</span></label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6 mrgn-bttm-md">
+                                <label for="cdQuarterY" th:class="required">
+                                    <span class="field-name" th:utext="#{field.quarter}">Quarter</span>
+                                </label>
+                                <br/>
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <label><input type="radio" name="quarter" th:field="*{quarter}" required="required" th:value="${1}" id="cdQuarterY"/><span th:utext="#{field.yes}">Yes</span></label>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label><input type="radio" name="quarter" th:field="*{quarter}" required="required" th:value="${0}" id="cdQuarterN"/><span th:utext="#{field.no}">No</span></label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6 mrgn-bttm-md">
+                                <label for="cdNAFOY" th:class="required">
+                                    <span class="field-name" th:utext="#{field.nafo_division}">NAFO Division</span>
+                                </label>
+                                <br/>
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <label><input type="radio" name="nafo" th:field="*{nafoDivision}" required="required" th:value="${1}" id="cdNAFOY"/><span th:utext="#{field.yes}">Yes</span></label>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label><input type="radio" name="nafo" th:field="*{nafoDivision}" required="required" th:value="${0}" id="cdNAFON"/><span th:utext="#{field.no}">No</span></label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6 mrgn-bttm-md">
+                                <label for="cdUnitY" th:class="required">
+                                    <span class="field-name" th:utext="#{field.unit_area}">Unit Area</span>
+                                </label>
+                                <br/>
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <label><input type="radio" name="unit" th:field="*{unitArea}" required="required" th:value="${1}" id="cdUnitY"/><span th:utext="#{field.yes}">Yes</span></label>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label><input type="radio" name="unit" th:field="*{unitArea}" required="required" th:value="${0}" id="cdUnitN"/><span th:utext="#{field.no}">No</span></label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6 mrgn-bttm-md">
+                                <label for="cdVesselY" th:class="required">
+                                    <span class="field-name" th:utext="#{field.vessel_length_category}">Vessel Length Category</span>
+                                </label>
+                                <br/>
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <label><input type="radio" name="vessel" th:field="*{vesselLengthCat}" required="required" th:value="${1}" id="cdVesselY"/><span th:utext="#{field.yes}">Yes</span></label>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label><input type="radio" name="vessel" th:field="*{vesselLengthCat}" required="required" th:value="${0}" id="cdVesselN"/><span th:utext="#{field.no}">No</span></label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6 mrgn-bttm-md">
+                                <label for="cdGearY" th:class="required">
+                                    <span class="field-name" th:utext="#{field.gear}">Gear</span>
+                                </label>
+                                <br/>
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <label><input type="radio" name="gear" th:field="*{gear}" required="required" th:value="${1}" id="cdGearY"/><span th:utext="#{field.yes}">Yes</span></label>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label><input type="radio" name="gear" th:field="*{gear}" required="required" th:value="${0}" id="cdGearN"/><span th:utext="#{field.no}">No</span></label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6 mrgn-bttm-md">
+                                <label for="cdMeshY" th:class="required">
+                                    <span class="field-name" th:utext="#{field.mesh_size}">Mesh Size</span>
+                                </label>
+                                <br/>
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <label><input type="radio" name="mesh" th:field="*{mesh}" required="required" th:value="${1}" id="cdMeshY"/><span th:utext="#{field.yes}">Yes</span></label>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label><input type="radio" name="mesh" th:field="*{mesh}" required="required" th:value="${0}" id="cdMeshN"/><span th:utext="#{field.no}">No</span></label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6 mrgn-bttm-md">
+                                <label for="cdObserverCompanyY" th:class="required">
+                                    <span class="field-name" th:utext="#{page.settings.code_tables.observerCompanies}">Observer Company</span>
+                                </label>
+                                <br/>
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <label><input type="radio" name="observerCompany" th:field="*{observerCompany}" required="required" th:value="${1}" id="cdObserverCompanyY"/><span th:utext="#{field.yes}">Yes</span></label>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label><input type="radio" name="observerCompany" th:field="*{observerCompany}" required="required" th:value="${0}" id="cdObserverCompanyN"/><span th:utext="#{field.no}">No</span></label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row col-md-6">
+                    <div class="row col-md-12">
+                        <h4 class="row col-xs-6 col-md-12 no-mar-top text-center">
+                            <span th:utext="#{form.header.sampling_target}">Sampling Targets</span>
+                            <strong class="required-color" th:utext="#{form.all_required}">(required)</strong>
+                        </h4>
+                        <div class="row row-margin-left">
+                            <div class="col-md-5 col-md-push-5">
+                                <label class="full-width" th:utext="#{field.quantity_per_group}">Quantity per length group</label>
+                            </div>
+                            <div class="col-md-12 col-xs-12">
+                                <div class="row">
+                                    <div class="col-xs-2 col-md-5 text-right">
+                                        <label for="cdOtolith" class="required">
+                                            <span class="field-name" th:utext="#{field.otolith}">Otoliths</span>
+                                        </label>
+                                    </div>
+                                    <div class="col-md-4 col-xs-6">
+                                        <input type="number" th:attr="data-msg-number=#{form.validation.digits_only}"
+                                               oninput="app.validateIsNumber(this);return app.validateLengthOfNumber(this, 9)" class="full-width" required="required" th:field="*{otolithT}" id="cdOtolith"/>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-12 col-xs-12">
+                                <div class="row">
+                                    <div class="col-xs-2 col-md-5 text-right">
+                                        <label for="cdStomach" class="required">
+                                            <span class="field-name" th:utext="#{field.stomach}">Stomach</span>
+                                        </label>
+                                    </div>
+                                    <div class="col-md-4 col-xs-6">
+                                        <input type="number" th:attr="data-msg-number=#{form.validation.digits_only}"
+                                               oninput="app.validateIsNumber(this);return app.validateLengthOfNumber(this, 9)" class="full-width" required="required" th:field="*{stomachT}" id="cdStomach"/>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-12 col-xs-12">
+                                <div class="row">
+                                    <div class="col-xs-2 col-md-5 text-right">
+                                        <label for="cdFrozen" class="required">
+                                            <span class="field-name" th:utext="#{field.frozen}">Frozen</span></label>
+                                    </div>
+                                    <div class="col-md-4 col-xs-6">
+                                        <input type="number" th:attr="data-msg-number=#{form.validation.digits_only}"
+                                               oninput="app.validateIsNumber(this);return app.validateLengthOfNumber(this, 9)" class="full-width" required="required" th:field="*{frozenT}" id="cdFrozen"/>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-12 col-xs-12">
+                                <div class="row">
+                                    <div class="col-xs-2 col-md-5 text-right">
+                                        <label for="cdWeight" class="required">
+                                            <span class="field-name" th:utext="#{field.weight}">Weight</span>
+                                        </label>
+                                    </div>
+                                    <div class="col-md-4 col-xs-6">
+                                        <input type="number" th:attr="data-msg-number=#{form.validation.digits_only}"
+                                               oninput="app.validateIsNumber(this);return app.validateLengthOfNumber(this, 9)" class="full-width" required="required" th:field="*{weightT}" id="cdWeight"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+</th:block>
+</body>
+</html>

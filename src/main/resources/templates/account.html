@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{__${'layouts/intranet-layout-'+layoutMode}__}">
+<head>
+    <title th:utext="#{template.account.link}"></title>
+</head>
+<body>
+    <th:block layout:fragment="content">
+        <br />
+        <section class="panel panel-primary">
+            <header class="panel-heading">
+                <h3 class="panel-title" th:utext="#{template.account.link}">My Account</h3>
+            </header>
+            <div class="panel-body">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <div class="col-md-12" style="font-size: 8em; border: 3px outset; text-align: center;">
+                                <span class="glyphicon glyphicon-user" style="vertical-align: -15%;"></span>
+                            </div>
+                        </div>
+                        <div class="col-md-9">
+                            <div class="container-fluid">
+                                <div class="row">
+                                    <div class="col-md-3"><label th:utext="#{field.username}">Username</label></div>
+                                    <div class="col-md-9">
+                                        <span th:utext="${account.username}">ntPrincipal</span>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-3"><label th:utext="#{field.name}">Name</label></div>
+                                    <div class="col-md-9">
+                                        <span th:utext="${account.fullname}">First Name</span>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-3"><label th:utext="#{field.initials}">Initials</label></div>
+                                    <div class="col-md-9">
+                                        <span th:utext="${account.initials}">IN</span>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-3"><label th:utext="#{field.email}">E-mail</label></div>
+                                    <div class="col-md-9">
+                                        <span th:utext="${account.email}">Email</span>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-3"><label th:utext="#{field.roles}">Role(s)</label></div>
+                                    <div class="col-md-9">
+                                        <ul class="list-unstyled">
+                                            <th:block th:each="role : ${account.roles}">
+                                                <li th:utext="${role}">RoleX</li>
+                                            </th:block>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </th:block>
+    <!-- 	Global Layout JS -->
+    <th:block layout:fragment="scripts">
+    </th:block>
+</body>
+</html>

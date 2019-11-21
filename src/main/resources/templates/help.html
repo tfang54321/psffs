@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{__${'layouts/intranet-layout-'+layoutMode}__}">
+<head>
+    <title th:utext="#{template.help.link}"></title>
+</head>
+<body>
+    <th:block layout:fragment="content">
+        <h3 th:utext="#{template.help.link}">Help</h3>
+        <section class="alert alert-info">
+            <p th:utext="#{help.gcdocs_info}">Info!</p>
+        </section>
+        <h5 th:utext="#{help.doc.user_guide}">User guide</h5>
+        <a th:href="#{help.doc.user_guide.url}" th:utext="#{help.doc.user_guide.url}" target="_blank">...</a>
+        <h5 th:utext="#{help.doc.app_workflow}">Application Workflow Diagram</h5>
+        <a th:href="#{help.doc.app_workflow.url}" th:utext="#{help.doc.app_workflow.url}" target="_blank">...</a>
+        <br /><br />
+    </th:block>
+    <!-- 	Global Layout JS -->
+    <th:block layout:fragment="scripts">
+    </th:block>
+</body>
+</html>

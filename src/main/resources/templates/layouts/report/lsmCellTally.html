@@ -1,0 +1,55 @@
+<th:block xmlns:th="http://www.thymeleaf.org">
+    <table class="table table-hover table-condensed report-table">
+        <thead>
+            <tr>
+                <td colspan="16">
+                    <form th:object="${reportForm}">
+                        <fieldset>
+                            <th:block th:replace="layouts/cellCriteria :: cellCriteria(reportMode=${true},textOnly=${true})">...</th:block>
+                            <hr />
+                            <div class="container-fluid">
+                                <div class="row">
+                                    <div class="col-xs-12">
+                                        <label for="nbrLF" th:utext="#{report.label.nbr_lf}">No. of Frequencies:</label>
+                                        <input type="text" id="nbrLF" th:value="${nbrLF}" data-text-only="true" />
+                                    </div>
+                                </div>
+                            </div>
+                        </fieldset>
+                    </form>
+                </td>
+            </tr>
+            <tr>
+                <th class="col-xs-5" th:utext="#{field.maturity_level}">Maturity</th>
+                <th class="col-xs-7" colspan="15" th:utext="#{field.numbers}">Numbers</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:if="${#lists.isEmpty(tallyList)}">
+                <td colspan="16">
+                    <section class="alert alert-info">
+                        <p th:utext="#{js.info.no_data_found}">No data</p>
+                    </section>
+                </td>
+            </tr>
+            <tr th:if="${not #lists.isEmpty(tallyList)}" th:each="entry : ${tallyList}">
+                <td th:utext="${entry.maturityCode+' '+entry.description}">Code Description</td>
+                <td th:utext="${entry.length1Str}">##</td>
+                <td th:utext="${entry.length2Str}">##</td>
+                <td th:utext="${entry.length3Str}">##</td>
+                <td th:utext="${entry.length4Str}">##</td>
+                <td th:utext="${entry.length5Str}">##</td>
+                <td th:utext="${entry.length6Str}">##</td>
+                <td th:utext="${entry.length7Str}">##</td>
+                <td th:utext="${entry.length8Str}">##</td>
+                <td th:utext="${entry.length9Str}">##</td>
+                <td th:utext="${entry.length10Str}">##</td>
+                <td th:utext="${entry.length11Str}">##</td>
+                <td th:utext="${entry.length12Str}">##</td>
+                <td th:utext="${entry.length13Str}">##</td>
+                <td th:utext="${entry.length14Str}">##</td>
+                <td th:utext="${entry.length15Str}">##</td>
+            </tr>
+        </tbody>
+    </table>
+</th:block>

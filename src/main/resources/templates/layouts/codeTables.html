@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+<head></head>
+<body>
+    <th:block th:fragment="baseLookupFields" th:with="idFieldName=${idField != null ? idField : 'id'},showDescVal = ${showDescriptions == null ? true : false}">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-4">
+                    <label for="lookupId">ID</label>
+                    <br/>
+                    <input type="text" id="lookupId" class="full-width" th:field="*{__${idFieldName}__}" th:readonly="${true}" th:attr="data-text-only=${'true'}"/>
+                </div>
+                <div class="col-md-4" th:style="${#strings.isEmpty(codeLabelKey) ? 'display: none;':''}">
+                    <label for="legacyCode" class="required">
+                        <span  th:utext="#{__${#strings.isEmpty(codeLabelKey) ? 'field.code':codeLabelKey}__}">Code</span>
+                        <strong class="required" th:utext="#{form.required}">(required)</strong>
+                    </label>
+                    <br/>
+                    <input type="text" id="legacyCode" required="required" class="full-width" maxlength="10" th:field="*{legacyCode}" th:disabled="${#strings.isEmpty(codeLabelKey)}" onchange="this.value = this.value.trim().toUpperCase()"/>
+                </div>
+            </div>
+            <div class="row"><div class="col-md-12"><hr /></div></div>
+            <div class="row" th:style="${not showDescVal ? 'display: none;' : ''}">
+                <div class="col-md-10">
+                    <label for="englishDescription" class="required" id="engDesc">
+                        <span class="field-name" th:utext="#{field.edesc}">Description (EN)</span>
+                        <strong class="required" th:utext="#{form.required}">required</strong>
+                    </label>
+                    <br/>
+                    <textarea id="englishDescription" class="full-width" rows="4" maxlength="255" th:field="*{englishDescription}" required="required" onchange="this.value = this.value.trim()"></textarea>
+                </div>
+            </div>
+            <div class="row" th:style="${not showDescVal ? 'display: none;' : ''}">
+                <div class="col-md-10">
+                    <label for="frenchDescription" class="required" id="frDesc">
+                        <span class="field-name" th:utext="#{field.fdesc}">Description (FR)</span>
+                        <strong class="required" th:utext="#{form.required}">required</strong>
+                    </label>
+                    <br/>
+                    <textarea id="frenchDescription" class="full-width" rows="4" maxlength="255" th:field="*{frenchDescription}" required="required" onchange="this.value = this.value.trim()"></textarea>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-4">
+                    <label for="activeYes" th:utext="#{field.active}">Active?</label>
+                    <br/>
+                    <input type="radio" id="activeYes" th:field="*{activeFlag}" value="1" />&nbsp;
+                    <label for="activeYes" th:utext="#{field.yes}">Yes</label>&nbsp;&nbsp;
+                    <input type="radio" id="activeNo" th:field="*{activeFlag}" value="0" />&nbsp;
+                    <label for="activeNo" th:utext="#{field.no}">No</label>
+                </div>
+                <div class="col-md-4">
+                    <label for="order" class="required">
+                        <span class="field-name" th:utext="#{field.order}">Order</span>
+                        <strong class="required" th:utext="#{form.required}">required</strong>
+                    </label>
+                    <br/>
+                    <input type="number" id="order" min="1" th:attr="max=${T(java.lang.Integer).MAX_VALUE}" class="full-width" th:field="*{order}" required="required" oninput="app.validateIsNumber(this)"/>
+                </div>
+            </div>
+            <div class="row"><div class="col-md-12"><hr /></div></div>
+        </div>
+    </th:block>
+
+    <th:block th:fragment="vesselFields">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-6">
+                    <label for="cfvSideNumber" class="required">
+                        <span class="field-name" th:utext="#{field.cfv_side_number}">CFV/Side number</span>
+                        <strong class="required" th:utext="#{form.required}">(required)</strong>
+                    </label><br />
+                    <input type="text" id="cfvSideNumber" class="full-width" th:field="*{cfvSideNumber}" maxlength="255" required="required" onchange="this.value.trim()" />
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-4">
+                    <label for="vesselLengthMeters" class="field-name">
+                        <span th:utext="#{field.length}">Length</span> (m)
+                    </label><br />
+                    <input type="text" id="vesselLengthMeters" placeholder="000.00" class="full-width" th:field="*{vesselLengthMeters}" onchange="lookups.vessel.autoSelectLengthCategory(this, 3.281, '*', 'vesselLengthFeet', 2)" />
+                </div>
+                <div class="col-md-4">
+                    <label for="vesselLengthFeet" class="field-name">
+                        <span th:utext="#{field.length}">Length</span> (<span th:utext="#{field.unit.feet}">ft</span>)
+                    </label><br />
+                    <input type="text" id="vesselLengthFeet" placeholder="000.00" class="full-width" th:field="*{vesselLengthFeet}" onchange="lookups.vessel.autoSelectLengthCategory(this, 3.281, '/', 'vesselLengthMeters', 2)" />
+                </div>
+                <div class="col-md-4">
+                    <label for="vesselLengthCategoryData">
+                        <span class="field-name" th:utext="#{field.vessel_length_category}">Length category</span>
+                    </label><br />
+                    <select id="vesselLengthCategoryData" class="full-width" th:field="*{vesselLengthCategoryData}" th:attr="data-text-only=${'true'}">
+                        <th:block th:each="vlc : ${@lookupService.getLookupsByKey('lengthCategories', true)}">
+                            <option th:value="${vlc.value}" th:utext="${vlc.value eq '' ? '' : vlc.text}" th:attr="data-active=${vlc.active}">Text</option>
+                        </th:block>
+                    </select>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <label for="tonnageId">
+                        <span class="field-name" th:utext="#{field.tonnage}">Tonnage</span>
+                    </label><br />
+                    <select id="tonnageId" class="full-width" th:field="*{tonnageId}">
+                        <th:block th:each="tonnage : ${@lookupService.getLookupsByKey('tonnages', true)}">
+                            <option th:value="${tonnage.value}" th:utext="${tonnage.text}" th:attr="data-active=${tonnage.active}">Text</option>
+                        </th:block>
+                    </select>
+                </div>
+                <div class="col-md-6">
+                    <label for="grTonnage">
+                        <span class="field-name" th:utext="#{field.grt_tonnage}">GRT</span>
+                    </label><br />
+                    <input type="text" id="grTonnage" class="full-width" placeholder="000.00" th:field="*{grTonnage}" onchange="this.value = !isNaN(this.value) ? parseFloat(this.value).toFixed(2) : ''" />
+                </div>
+            </div>
+            <div class="row"><div class="col-md-12"><hr /></div></div>
+        </div>
+    </th:block>
+
+    <th:block th:fragment="lengthCategoryFields">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-6">
+                    <label for="lengthCatMinLength" class="required">
+                        <span class="field-name" th:utext="#{field.min_meters}">Minimum Meters</span> (m)
+                        <strong class="required" th:utext="#{form.required}">(required)</strong>
+                    </label><br />
+                    <input type="text" id="lengthCatMinLength" placeholder="000.00" class="full-width" required="required" th:field="*{minMeters}" oninput="app.validateIsNumber(this)" onchange="lookups.validateMinGreaterThanMax('#lengthCatMaxLength','#lengthCatMinLength','displayErr')"/>
+                </div>
+                <div class="col-md-6">
+                    <label for="lengthCatMaxLength" class="required">
+                        <span class="field-name" th:utext="#{field.max_meters}">Maximum Meters</span> (m)
+                        <strong class="required" th:utext="#{form.required}">(required)</strong>
+                    </label><br />
+                    <input type="text" id="lengthCatMaxLength" placeholder="000.00" class="full-width" required="required" th:field="*{maxMeters}" oninput="app.validateIsNumber(this)" onchange="lookups.validateMinGreaterThanMax('#lengthCatMaxLength','#lengthCatMinLength','displayErr')"/>
+                </div>
+            </div>
+        </div>
+    </th:block>
+
+    <th:block th:fragment="lengthGroupFields">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-6">
+                    <label for="lengthGroup" class="required">
+                        <span class="field-name" th:utext="#{field.length_group}">Length Group</span>
+                        <strong th:utext="#{form.required}" class="required">required</strong>
+                    </label><br />
+                    <input type="number" id="lengthGroup" placeholder="000" class="full-width" min="1"
+                           oninput="app.validateIsNumber(this)" th:field="*{lengthGroup}" required="required" />
+                </div>
+                <div class="col-md-6">
+                    <label for="lengthGroupLengthUnit" class="required">
+                        <span class="field-name" th:utext="#{field.length_unit}">Length Unit</span>
+                        <strong th:utext="#{form.required}" class="required">required</strong>
+                    </label><br />
+                    <select id="lengthGroupLengthUnit" class="full-width" th:field="*{lengthUnitId}" required="required">
+                        <th:block th:each="lglu : ${@lookupService.getLookupsByKey('lengthUnits', true)}">
+                            <option th:value="${lglu.value}" th:utext="${lglu.text}">Text</option>
+                        </th:block>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </th:block>
+
+    <th:block th:fragment="maturityFields">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-6">
+                    <label for="maturitySexCode" class="required">
+                        <span class="field-name" th:utext="#{field.sex_code}">Sex Code</span>
+                        <strong th:utext="#{form.required}" class="required">required</strong>
+                    </label><br />
+                    <select id="maturitySexCode" class="full-width" th:field="*{sexCodeId}" required="required">
+                        <th:block th:each="mSexCode : ${@lookupService.getLookupsByKey('sexCodes', true)}">
+                            <option th:value="${mSexCode.value}" th:utext="${mSexCode.text}">Text</option>
+                        </th:block>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </th:block>
+
+    <th:block th:fragment="quarterFields" th:with="qNum=${quarterNum != null ? quarterNum : 0}">
+        <div class="row row-margin-left">
+            <div class="col-md-5">
+                <label th:for="'periodFromMonth'+${qNum}" class="required">
+                    <span class="field-name" th:utext="#{form.field.from}">From</span>
+                    <strong class="required" th:utext="#{form.required}">required</strong>
+                </label>
+                <br/>
+                <select th:id="'periodFromMonth'+${qNum}"  class="full-width" th:field="*{__${'periodFromMonth'+qNum}__}" required="required">
+                    <th:block th:each="month : ${@lookupService.getLookupsByKey('months',true)}">
+                        <option th:value="${month.value}" th:utext="${month.text}">Text</option>
+                    </th:block>
+                </select>
+            </div>
+
+            <div class="col-md-5">
+                <label th:for="'periodToMonth'+${qNum}" class="required">
+                    <span class="field-name" th:utext="#{form.field.to}">To</span>
+                    <strong class="required" th:utext="#{form.required}">required</strong>
+                </label>
+                <br/>
+                <select th:id="'periodToMonth'+${qNum}" class="full-width" th:field="*{__${'periodToMonth'+qNum}__}" required="required">
+                    <th:block th:each="month : ${@lookupService.getLookupsByKey('months',true)}">
+                        <option th:value="${month.value}" th:utext="${month.text}">Text</option>
+                    </th:block>
+                </select>
+            </div>
+        </div>
+        <div class="row row-margin-left">
+            <div class="col-md-5">
+                <label th:for="'periodNumber'+${qNum}" th:utext="#{field.period}">Period</label>
+                <br/>
+                <input type="number" th:id="'periodNumber'+${qNum}" th:min="1" th:attr="max=${T(java.lang.Integer).MAX_VALUE}"
+                       class="full-width removeNumbler" readonly="readonly" th:field="*{__${'periodNumber'+qNum}__}" oninput="app.validateIsNumber(this)"/>
+            </div>
+        </div>
+    </th:block>
+
+    <th:block th:fragment="quotaFields">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-6">
+                    <label for="nafoCountryCode" class="required">
+                        <span class="field-name" th:utext="#{field.nafo_country_code}">NAFO Country Code</span>
+                        <strong th:utext="#{form.required}" class="required">required</strong>
+                    </label><br />
+                    <input type="text" maxlength="255" id="nafoCountryCode" required="required" class="full-width" th:field="*{nafoCountryCode}"/>
+                </div>
+            </div>
+        </div>
+    </th:block>
+
+    <th:block th:fragment="speciesFields">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-6">
+                    <label for="scientificName">
+                        <span class="field-name" th:utext="#{field.scientific_name}">Scientific Name</span>
+                    </label><br />
+                    <input type="text" maxlength="255" id="scientificName" class="full-width" th:field="*{scientificName}"/>
+                </div>
+                <div class="col-md-6">
+                    <label for="isscaapCode">
+                        <span class="field-name" th:utext="#{field.isscaapCode}">ISS CAAP Code</span>
+                    </label><br />
+                    <input type="number" id="isscaapCode" class="full-width" th:field="*{isscaapCode}" oninput="app.validateIsNumber(this)"/>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <label for="taxonomicCode">
+                        <span class="field-name" th:utext="#{field.taxonomicCode}">Taxonomic Code</span>
+                    </label><br />
+                    <input type="number" max=1999999999 id="taxonomicCode" class="full-width" th:field="*{taxonomicCode}" oninput="app.validateIsNumber(this)"/>
+                </div>
+                <div class="col-md-6">
+                    <label for="nafoSpeciesCode">
+                        <span class="field-name" th:utext="#{field.nafo_species_code}">NAFO Species Code</span>
+                    </label><br />
+                    <input type="text" maxlength="255" id="nafoSpeciesCode" class="full-width" th:field="*{nafoSpeciesCode}"/>
+                </div>
+            </div>
+        </div>
+    </th:block>
+
+    <th:block th:fragment="unitAreaFields">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-6">
+                    <label for="nafoDivision" class="required">
+                        <span class="field-name" th:utext="#{field.nafo_division}">NAFO Division</span>
+                        <strong th:utext="#{form.required}" class="required">required</strong>
+                    </label><br />
+                    <select id="nafoDivision" class="full-width" th:field="*{nafoDivisionId}" required="required">
+                        <th:block th:each="nafoDiv : ${@lookupService.getLookupsByKey('nafoDivisions',true)}">
+                            <option th:value="${nafoDiv.value}" th:utext="${nafoDiv.text}" th:attr="data-active=${nafoDiv.active}">Text</option>
+                        </th:block>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </th:block>
+
+    <th:block th:fragment="wcfFields">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-6">
+                    <label for="conversionFactor" class="required">
+                        <span class="field-name" th:utext="#{field.weight_conv_factor}">Weight Conversion Factor</span>
+                        <strong th:utext="#{form.required}" class="required">required</strong>
+                    </label><br />
+                    <input type="text" id="conversionFactor" placeholder="000.00" class="full-width" th:field="*{conversionFactor}" required="required" maxlength="9" oninput="app.validateIsFloat(this)"/>
+                </div>
+                <div class="col-md-6">
+                    <label for="species">
+                        <span class="field-name" th:utext="#{field.species}">Species</span>
+                    </label><br />
+                    <select id="species" class="full-width" th:field="*{speciesIds}" multiple="multiple">
+                        <th:block th:each="species : ${@lookupService.getLookupsByKey('species')}">
+                            <option th:value="${species.value}" th:utext="${species.text}" th:attr="data-active=${species.active}">Text</option>
+                        </th:block>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </th:block>
+
+    <th:block th:fragment="samplingRangesFields">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-6 mrgn-bttm-md">
+                    <label class="required">
+                        <span class="field-name" th:utext="#{field.mesh_size}">Mesh Size</span>
+                        <strong th:utext="#{form.required}" class="required">required</strong>
+                    </label>
+                    <div class="row row-margin-left col-xs-12">
+                        <div class="row col-xs-4">
+                            <label for="meshMin" class="hidden-label"><span class="field-name" style="display: none;" th:utext="#{field.mesh_size}">Mesh Size</span></label>
+                            <input type="number" id="meshMin" placeholder="000" class="full-width" th:field="*{meshSizeMin}" required="required" onchange="lookups.validateMinGreaterThanMax('#meshMax','#meshMin','displayErr1','js.error.max_less_than_min_mesh')"  oninput="app.validateIsNumber(this)"/>
+                        </div>
+                        <div class="row row-margin-left col-xs-2">
+                            <label th:utext="#{field.to}"></label>
+                        </div>
+                        <div class="row col-xs-4">
+                            <label for="meshMax" class="hidden-label"><span class="field-name" style="display: none;" th:utext="#{field.mesh_to}">Mesh To</span></label>
+                            <input type="number" id="meshMax" placeholder="000" class="full-width" th:field="*{meshSizeMax}" required="required" onchange="lookups.validateMinGreaterThanMax('#meshMax','#meshMin','displayErr1','js.error.max_less_than_min_mesh')" oninput="app.validateIsNumber(this)"/>
+                        </div>
+                        <div class="row row-margin-left col-xs-2">
+                            <label th:utext="#{field.millimetres}">millimeters</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6 mrgn-bttm-md">
+                    <label class="required">
+                        <span class="field-name" th:utext="#{field.latitude}">Latitude</span>
+                        <strong th:utext="#{form.required}" class="required">required</strong>
+                    </label>
+                    <div class="row row-margin-left col-xs-12">
+                        <div class="row col-xs-4">
+                            <label for="latMin" class="hidden-label"><span class="field-name" style="display: none;" th:utext="#{field.latitude}">Latitude</span></label>
+                            <input type="number" id="latMin" placeholder="000" class="full-width" th:field="*{latitudeMin}" required="required" onchange="lookups.validateMinGreaterThanMax('#latMax','#latMin','displayErr2','js.error.max_less_than_min_lat')" oninput="app.validateIsNumber(this)"/>
+                        </div>
+                        <div class="row row-margin-left col-xs-2">
+                            <label th:utext="#{field.to}"></label>
+                        </div>
+                        <div class="row col-xs-4">
+                            <label for="latMax" class="hidden-label"><span class="field-name" style="display: none;" th:utext="#{field.latitude_to}">Latitude To</span></label>
+                            <input type="number" id="latMax" placeholder="000" class="full-width" th:field="*{latitudeMax}" required="required" onchange="lookups.validateMinGreaterThanMax('#latMax','#latMin','displayErr2','js.error.max_less_than_min_lat')" oninput="app.validateIsNumber(this)"/>
+                        </div>
+                        <div class="row row-margin-left col-xs-2">
+                            <label th:utext="#{field.unit.arc_minutes}">arc minutes</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6 mrgn-bttm-md">
+                    <label class="required">
+                        <span class="field-name" th:utext="#{field.longitude}">Longitude</span>
+                        <strong th:utext="#{form.required}" class="required">required</strong>
+                    </label>
+                    <div class="row row-margin-left col-xs-12">
+                        <div class="row col-xs-4">
+                            <label for="longMin" class="hidden-label"><span class="field-name" style="display: none;" th:utext="#{field.longitude}">Longitude</span></label>
+                            <input type="number" id="longMin" placeholder="000" class="full-width" th:field="*{longitudeMin}" required="required" onchange="lookups.validateMinGreaterThanMax('#longMax','#longMin','displayErr3','js.error.max_less_than_min_long')" oninput="app.validateIsNumber(this)"/>
+                        </div>
+                        <div class="row row-margin-left col-xs-2">
+                            <label th:utext="#{field.to}"></label>
+                        </div>
+                        <div class="row col-xs-4">
+                            <label for="longMax" class="hidden-label"><span class="field-name" style="display: none;" th:utext="#{field.longitude_to}">Longitude To</span></label>
+                            <input type="number" id="longMax" placeholder="000" class="full-width" th:field="*{longitudeMax}" required="required" onchange="lookups.validateMinGreaterThanMax('#longMax','#longMin','displayErr3','js.error.max_less_than_min_long')"  oninput="app.validateIsNumber(this)"/>
+                        </div>
+                        <div class="row row-margin-left col-xs-2">
+                            <label th:utext="#{field.unit.arc_minutes}">arc minutes</label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6 mrgn-bttm-md">
+                    <label class="required">
+                        <span class="field-name" th:utext="#{field.depth}">Depth</span>
+                        <strong th:utext="#{form.required}" class="required">required</strong>
+                    </label>
+                    <div class="row row-margin-left col-xs-12">
+                        <div class="row col-xs-4">
+                            <label for="depthMin" class="hidden-label"><span class="field-name" style="display: none;" th:utext="#{field.depth}">Depth</span></label>
+                            <input type="number" id="depthMin" placeholder="000" class="full-width" th:field="*{depthMin}" required="required" onchange="lookups.validateMinGreaterThanMax('#depthMax','#depthMin','displayErr4','js.error.max_less_than_min_depth')" oninput="app.validateIsNumber(this)"/>
+                        </div>
+                        <div class="row row-margin-left col-xs-2">
+                            <label th:utext="#{field.to}"></label>
+                        </div>
+                        <div class="row col-xs-4">
+                            <label for="depthMax" class="hidden-label"><span class="field-name" style="display:none;" th:utext="#{field.depth_to}">Depth To</span></label>
+                            <input type="number" id="depthMax" placeholder="000" class="full-width" th:field="*{depthMax}" required="required" onchange="lookups.validateMinGreaterThanMax('#depthMax','#depthMin','displayErr4','js.error.max_less_than_min_depth')" oninput="app.validateIsNumber(this)"/>
+                        </div>
+                        <div class="row row-margin-left col-xs-2">
+                            <label th:utext="#{field.metres}">meters</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </th:block>
+</body>
+</html>

@@ -1,0 +1,59 @@
+#Global settings
+server.servlet.context-path=/psffs/
+
+#WET layout settings
+wet.template-resources-base-path=@psffs.domain@/share/wet/4.0.27/theme-gc-intranet/
+wet.template-footer-base-path=@psffs.domain@/share/includes/wet/footer-wet4-
+
+#eAccess settings
+e-access.enabled=true
+#Uncomment the below line if Logout starts working for intranet applications
+#e-access.logout-url=/eAccess.sso/Logout
+
+#tools
+tools.local.excludes=ctab_checksums,trip_settings,vessels
+
+#app settings
+app.global-script.path=/js/app.js
+app.global-css.path=/css/app.css
+
+#Spring settings
+spring.thymeleaf.template-resolver-order=1
+spring.h2.console.enabled=false
+spring.jmx.default-domain=psffs.dfo-mpo.gc.ca
+spring.jpa.show-sql=false
+spring.jpa.hibernate.ddl-auto=none
+spring.jpa.database=ORACLE
+spring.datasource.url=@psffs.db.url@
+spring.datasource.username=@psffs.db.user@
+spring.datasource.password=@psffs.db.pass@
+spring.datasource.driver-class-name=oracle.jdbc.OracleDriver
+spring.datasource.hikari.pool-name=psffsHikariPool
+spring.datasource.initialization-mode=never
+spring.datasource.tomcat.max-wait=10000
+spring.datasource.tomcat.max-active=10
+spring.datasource.tomcat.test-on-borrow=true
+spring.datasource.tomcat.remove-abandoned=true
+spring.datasource.tomcat.remove-abandoned-timeout=60
+spring.datasource.tomcat.log-abandoned=true
+spring.datasource.tomcat.abandon-when-percentage-full=60
+spring.datasource.validation-query=SELECT 1
+spring.resources.cache.cachecontrol.no-cache=true
+spring.resources.cache.period=0
+spring.jpa.properties.hibernate.enable_lazy_load_no_trans=true
+
+#Application info settings
+info.app.artifactId=@project.artifactId@
+info.app.name-en=@project.name@
+info.app.name-fr=Gestion de l'information sur les esp&egrave;ces de poissons
+info.app.acronym=psffs
+info.app.description=@project.description@
+info.app.version=@project.version@
+info.app.timestamp=@timestamp@
+info.app.persistent-storage.enabled=true
+info.app.help-path=/help
+info.app.account-path=/account
+info.app.local_tools.excludes=ctab_checksums,trip_settings,vessels
+info.app.logo.src=/img/logo.svg
+info.app.logo.width=675
+info.app.logo.height=225

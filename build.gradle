@@ -1,0 +1,176 @@
+buildscript {
+    repositories {
+        maven {
+            url "https://plugins.gradle.org/m2/"
+        }
+        mavenCentral()
+    }
+    dependencies {
+      classpath('org.springframework.boot:spring-boot-gradle-plugin:2.1.6.RELEASE')
+// tag::build[]
+       classpath('gradle.plugin.com.palantir.gradle.docker:gradle-docker:0.13.0')
+// end::build[]
+    }
+}
+
+
+
+
+plugins {
+    id 'maven-publish'
+//    id 'org.springframework.boot' 
+    id 'java'
+    id 'war'
+}
+
+apply plugin: 'eclipse'
+apply plugin: 'idea'
+apply plugin: 'org.springframework.boot'
+apply plugin: 'io.spring.dependency-management'
+// tag::plugin[]
+apply plugin: 'com.palantir.docker'
+// end::plugin[]
+
+group = 'ca.gc.dfo'
+version = '1.2.13.RELEASE'
+description = 'Port Sampling - Fisheries Form System'
+sourceCompatibility = '1.8'
+//
+//// This is used as the docker image prefix (org)
+//group = 'springio'
+//
+bootJar {
+    baseName = 'gs-spring-boot-docker-psffs'
+    version =  '0.1.0'
+}
+
+// tag::task[]
+task unpack(type: Copy) {
+    dependsOn bootJar
+    from(zipTree(tasks.bootJar.outputs.files.singleFile))
+    into("build/dependency")
+}
+docker {
+    name "${project.group}/${bootJar.baseName}"
+    copySpec.from(tasks.unpack.outputs).into("dependency")
+    buildArgs(['DEPENDENCY': "dependency"])
+}
+// end::task[]
+
+
+
+
+
+
+repositories {
+    maven {
+        url = 'https://code.ent.dfo-mpo.ca/artifactory/libs-snapshot'
+    }
+
+    maven {
+        url = 'https://code.ent.dfo-mpo.ca/artifactory/libs-release'
+    }
+
+    maven {
+        url = 'http://repo.maven.apache.org/maven2'
+    }
+
+    mavenCentral()
+
+
+}
+
+configurations {
+    warLibs
+}
+
+dependencies {
+    compile(
+            'org.springframework.boot:spring-boot-starter-actuator',
+            'org.springframework.boot:spring-boot-starter-aop',
+            'org.springframework.boot:spring-boot-starter-data-jpa',
+            'org.springframework.boot:spring-boot-starter-security',
+            'org.springframework.boot:spring-boot-starter-thymeleaf',
+            'org.springframework.boot:spring-boot-starter-web',
+            'ca.gc.dfo:spring-commons-offline-wet:1.4.2',
+            'org.projectlombok:lombok',
+            'com.querydsl:querydsl-jpa:4.2.1',
+            'org.reflections:reflections:0.9.11',
+            'org.apache.commons:commons-lang3:3.9',
+            'org.hibernate:hibernate-envers:5.3.10.Final',
+            'com.itextpdf:itextpdf:5.5.10'
+
+
+
+    )
+
+    annotationProcessor(
+            'javax.persistence:javax.persistence-api',
+            'org.projectlombok:lombok',
+            'com.querydsl:querydsl-apt:4.2.1:jpa'
+    )
+
+    providedCompile(
+            'javax.persistence:javax.persistence-api',
+            'org.springframework.boot:spring-boot-starter-tomcat'
+    )
+    runtimeOnly(
+      //      'com.h2database:h2'
+         'com.oracle:ojdbc7:11.1.1'
+    )
+
+    testCompile (
+            'org.springframework.boot:spring-boot-starter-test',
+            'org.springframework.security:spring-security-test'
+    )
+
+    warLibs (
+            'javax.persistence:javax.persistence-api'
+    )
+}
+
+publishing {
+    publications {
+        maven(MavenPublication) {
+            from(components.java)
+        }
+    }
+}
+
+processResources {
+    filesMatching('**/application.properties**') {
+        filter org.apache.tools.ant.filters.ReplaceTokens, tokens: [
+                'timestamp': (new java.text.SimpleDateFormat("yyyy-MM-dd hh:mm:ssaa")).format(new java.util.Date()),
+                'project.artifactId': project.archivesBaseName.toString(),
+                'project.name': 'Port Sampling - Fisheries Form System',
+                'project.description': 'A data acquisition tool that collects commercial fish species data for scientific research',
+                'project.version': project.version.toString()
+        ]
+    }
+}
+
+compileJava {
+    options.annotationProcessorGeneratedSourcesDirectory = file("$projectDir/src/generated/java")
+}
+
+sourceSets {
+    main.java.srcDirs += "$projectDir/src/generated/java"
+}
+
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
+}
+
+jar {
+    baseName = project.archivesBaseName.toString()
+    enabled = true
+    manifest {
+        attributes("Main-Class": "ca.gc.dfo.psffs.Application")
+    }
+}
+
+war {
+    baseName = project.archivesBaseName.toString()
+    enabled = true
+    classpath configurations.warLibs
+}

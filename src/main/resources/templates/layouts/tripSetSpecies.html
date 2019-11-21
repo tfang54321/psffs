@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+<head></head>
+<body>
+<th:block th:fragment="header" th:with="doRenderId=${renderId != null ? renderId : true},ssSelect2=${sampledSpeciesSelect2 != null and sampledSpeciesSelect2 ? 'true' : 'false'},doRenderLength=${renderLength != null ? renderLength : true}">
+    <section class="panel panel-primary">
+        <header class="panel-heading">
+            <h2 class="panel-title" th:utext="#{page.heading.trip_set_species}">Trip, Set, Species</h2>
+        </header>
+        <div class="panel-body">
+            <input type="hidden" id="id" th:field="*{id}" />
+            <div class="container-fluid">
+                <div class="row" th:if="${doRenderId}">
+                    <div class="col-md-4 mrgn-bttm-md">
+                        <label for="tssId" th:utext="#{field.tss_id}">TSS ID</label>
+                        <br />
+                        <input type="text" id="tssId" class="full-width" th:field="*{tssId}" th:attr="data-text-only=${true}" />
+                    </div>
+                    <div class="col-md-4">
+                        <label for="statusId" th:utext="#{form.field.status}">Status</label>
+                        <br />
+                        <select id="statusId" th:field="*{statusId}" th:attr="data-text-only=${true}">
+                            <th:block th:each="sts : ${@lookupService.getLookupsByKey('tssSamplingStatus', false)}">
+                                <option th:value="${sts.value}" th:utext="${sts.text}">Status</option>
+                            </th:block>
+                        </select>
+                    </div>
+                </div>
+                <div class="row mrgn-bttm-md">
+                    <div class="col-md-4">
+                        <label for="tripNumber" class="required">
+                            <span class="field-name" th:utext="#{field.trip_nbr}">Trip number</span>
+                            <strong class="required" th:utext="#{form.required}">req</strong>
+                        </label>
+                        <br/>
+                        <input type="number" id="tripNumber" class="full-width" th:field="*{tripNumber}" required="required" oninput="app.validateIsNumber(this);app.validateLengthOfNumber(this, 8)"/>
+                    </div>
+                    <div class="col-md-4">
+                        <label for="setNumber" class="required">
+                            <span class="field-name" th:utext="#{field.set_nbr}">Set number</span>
+                            <strong class="required" th:utext="#{form.required}">req</strong>
+                        </label>
+                        <br/>
+                        <input type="number" id="setNumber" class="full-width" th:field="*{setNumber}" required="required" oninput="app.validateIsNumber(this);app.validateLengthOfNumber(this, 8)"/>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label for="directedSpeciesId" class="required">
+                            <span class="field-name" th:utext="#{form.field.directed_species}">Directed species</span>
+                            <strong class="required" th:utext="#{form.required}">(required)</strong>
+                        </label>
+                        <br/>
+                        <select th:field="*{directedSpeciesId}" th:attr="data-searchable=${'true'}" class="full-width" id="directedSpeciesId" required="required">
+                            <th:block th:each="species : ${@lookupService.getLookupsByKey('species', true)}">
+                                <option th:value="${species.value}" th:utext="${species.text}" th:attr="data-active=${species.active}">Text</option>
+                            </th:block>
+                        </select>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-4">
+                        <label for="sampledSpeciesId" class="required">
+                            <span class="field-name" th:utext="#{form.field.sample_species}">Sample species</span>
+                            <strong class="required" th:utext="#{form.required}">(required)</strong>
+                        </label>
+                        <br/>
+                        <select th:field="*{sampledSpeciesId}" th:attr="data-searchable=${ssSelect2}" class="full-width" id="sampledSpeciesId" required="required">
+                            <th:block th:each="species : ${@lookupService.getLookupsByKey('species', true)}">
+                                <option th:value="${species.value}" th:utext="${species.text}" th:attr="data-active=${species.active}">Text</option>
+                            </th:block>
+                        </select>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label for="catchDate" class="required">
+                            <span class="field-name" th:utext="#{form.field.catch_date}">Catch date</span>
+                            <strong class="required" th:utext="#{form.required}">req</strong>
+                        </label>
+                        <br/>
+                        <input type="date" id="catchDate" class="full-width" th:field="*{catchDate}" th:attr="required=${'required'}" />
+                    </div>
+                    <div class="col-md-4">
+                        <label for="observerCompanyId" class="required">
+                            <span class="field-name" th:utext="#{field.observer_company}">Observer company</span>
+                            <strong class="required" th:utext="#{form.required}">req</strong>
+                        </label>
+                        <br/>
+                        <select class="full-width" id="observerCompanyId" required="required" th:field="*{observerCompanyId}" th:attr="data-searchable=${'true'}">
+                            <th:block th:each="oc : ${@lookupService.getLookupsByKey('observerCompanies', true)}">
+                                <option th:value="${oc.value}" th:utext="${oc.text}" th:attr="data-active=${oc.active}">Text</option>
+                            </th:block>
+                        </select>
+                    </div>
+                </div>
+                <div class="row"><div class="col-md-12"><hr /></div></div>
+                <div class="row mrgn-bttm-md">
+                    <div class="col-md-4">
+                        <label th:utext="#{field.catch_location}" class="field-name">Catch location</label>
+                        <br/>
+                        <th:block th:each="catchLoc,catchLocStat : ${@lookupService.getLookupsByKey('catchLocations')}">
+                            <input type="radio" class="lf-catch-loc" th:id="${'catchLoc'+catchLocStat.count}" th:field="*{catchLocationId}" th:value="${catchLoc.value}" />
+                            <label th:attr="for=${'catchLoc'+catchLocStat.count}" th:utext="${catchLoc.text}">Text</label>
+                        </th:block>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="lf-catch-loc" style="display: none;" th:utext="#{field.quarter}" for="offshoreQuarter" th:attr="data-catch-loc=${6}">Quarter</label>
+                        <label class="lf-catch-loc" style="display: none;" th:utext="#{field.quarter}" for="inshoreQuarter" th:attr="data-catch-loc=${7}">Quarter</label>
+                        <br/>
+                        <select id="offshoreQuarter" style="display: none;" class="lf-catch-loc" th:field="*{quarterData}" th:attr="data-catch-loc=${6}" th:disabled="${true}">
+                            <th:block th:each="quarter : ${@lookupService.getLookupsByKey(#request, 'offshoreQuarters', false)}">
+                                <option th:value="${quarter.value}" th:utext="${quarter.text}">Text</option>
+                            </th:block>
+                        </select>
+                        <select id="inshoreQuarter" style="display: none;" class="lf-catch-loc" th:field="*{quarterData}" th:attr="data-catch-loc=${7}" th:disabled="${true}">
+                            <th:block th:each="quarter : ${@lookupService.getLookupsByKey(#request, 'inshoreQuarters', false)}">
+                                <option th:value="${quarter.value}" th:utext="${quarter.text}">Text</option>
+                            </th:block>
+                        </select>
+                    </div>
+                </div>
+                <div class="row mrgn-bttm-md">
+                    <div class="col-md-4">
+                        <label for="catchCategoryId" th:utext="#{field.catch_category}">Category</label>
+                        <br/>
+                        <select id="catchCategoryId" class="full-width" th:field="*{catchCategoryId}" th:attr="data-searchable=${'true'}">
+                            <th:block th:each="cc : ${@lookupService.getLookupsByKey('catchCategories', true)}">
+                                <option th:value="${cc.value}" th:utext="${cc.text}" th:attr="data-active=${cc.active}">Text</option>
+                            </th:block>
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <label for="countryId" th:utext="#{field.country}">Quota</label>
+                        <br/>
+                        <select id="countryId" class="full-width" th:field="*{countryId}" th:attr="data-searchable=${true}">
+                            <th:block th:each="cq : ${@lookupService.getLookupsByKey('countries', true)}">
+                                <option th:value="${cq.value}" th:utext="${cq.text}" th:attr="data-active=${cq.active}">Text</option>
+                            </th:block>
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <label for="gearId" th:utext="#{field.gear}">Gear</label>
+                        <br/>
+                        <select id="gearId" class="full-width" th:field="*{gearId}" th:attr="data-searchable=${'true'}">
+                            <th:block th:each="gear : ${@lookupService.getLookupsByKey('gears', true)}">
+                                <option th:value="${gear.value}" th:utext="${gear.text}" th:attr="data-active=${gear.active}">Text</option>
+                            </th:block>
+                        </select>
+                    </div>
+                </div>
+                <div class="row mrgn-bttm-md">
+                    <div class="col-md-4">
+                        <label for="nafoDivisionId" th:utext="#{field.nafo_division}" class="field-name">NAFO division</label>
+                        <br/>
+                        <select id="nafoDivisionId" th:field="*{nafoDivisionId}">
+                            <th:block th:each="nafoDivision : ${@lookupService.getLookupsByKey('nafoDivisions', true)}">
+                                <option th:value="${nafoDivision.value}" th:utext="${nafoDivision.text}" th:attr="data-active=${nafoDivision.active}">Text</option>
+                            </th:block>
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <label for="unitAreaData" th:utext="#{field.unit_area}" class="field-name">Unit area</label>
+                        <br/>
+                        <select id="unitAreaData" th:field="*{unitAreaData}" th:disabled="${true}">
+                            <th:block th:each="unitArea : ${@lookupService.getLookupsByKey('unitAreas', true)}">
+                                <option th:value="${unitArea.value}" th:utext="${unitArea.text}" th:attr="data-active=${unitArea.active}">Text</option>
+                            </th:block>
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <label for="depthMeters">
+                            <span class="field-name" th:utext="#{field.depth}">Depth</span>(m)
+                        </label>
+                        <br/>
+                        <input type="text" id="depthMeters" class="full-width" placeholder="000.00" th:field="*{depthMeters}" oninput="app.validateIsFloat(this)" maxlength="9" th:min="${@settingService.getSettingValueByName('MIN_DEPTH')}" th:max="${@settingService.getSettingValueByName('MAX_DEPTH')}"/>
+                    </div>
+                </div>
+                <div class="row" th:if="${doRenderLength}">
+                    <div class="col-md-4">
+                        <label for="lengthUnitId" class="field-name" th:utext="#{field.length_unit}">Length unit</label>
+                        <br/>
+                        <select id="lengthUnitId" class="full-width" th:field="*{lengthUnitId}" th:attr="data-text-only=${true}">
+                            <th:block th:each="lu : ${@lookupService.getLookupsByKey('lengthUnits', false)}">
+                                <option th:value="${lu.value}" th:utext="${lu.text}">Text</option>
+                            </th:block>
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <label for="lengthGroupId" class="field-name" th:utext="#{field.length_group}">Length group</label>
+                        <br/>
+                        <select id="lengthGroupId" class="full-width" th:field="*{lengthGroupId}" th:attr="data-text-only=${true}">
+                            <th:block th:each="lg : ${@lookupService.getLookupsByKey('lengthGroups', false)}">
+                                <option th:value="${lg.value.substring(0, lg.value.indexOf(';'))}" th:utext="${lg.text}" th:attr="data-active=${lg.active}">Text</option>
+                            </th:block>
+                        </select>
+                    </div>
+                </div>
+                <input type="hidden" id="lengthGroupMin" th:field="*{lengthGroupMin}" />
+                <input type="hidden" id="lengthGroupMax" th:field="*{lengthGroupMax}" />
+            </div>
+        </div>
+    </section>
+</th:block>
+</body>
+</html>

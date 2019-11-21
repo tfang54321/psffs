@@ -1,0 +1,3 @@
+insert into PSFFS.CTAB_MATURITY (id, legacy_cd, sex_code_id, edesc, fdesc, active_flag, presentation_order, crt_by, crt_dt, mod_by, mod_dt) values (0, '', null, 'MATURITY NOT SAMPLED', 'FR MATURITY_NOT_SAMPLED', 0, 0, 'mackinnonje', SYSDATE, 'mackinnonje', SYSDATE);
+update PSFFS.SAMPLING_ENTRY set maturity_id = 0 where maturity_id is null;
+alter table PSFFS.SAMPLING_ENTRY modify maturity_id default 0 not null;

@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{__${'layouts/intranet-layout-'+layoutMode}__}">
+<head>
+    <title th:utext="${@messages.getMessage('page.settings.code_tables.any.list')+' '+@messages.getMessage('page.settings.code_tables.unit_areas')}"></title>
+</head>
+<body>
+    <th:block layout:fragment="content">
+        <br />
+        <div class="row">
+                <div class="col-sm-8">
+                    <span class="h3" th:utext="#{page.settings.code_tables.any.list}">List of</span>&nbsp;
+                    <span class="h3" th:utext="#{page.settings.code_tables.unit_areas}">Unit Areass</span>
+                </div>
+                <div class="col-sm-4 text-right">
+                    <a class="btn btn-default" th:href="@{__${'/'+pageLang+T(ca.gc.dfo.psffs.controllers.lookups.UnitAreaController).UNIT_AREA_CREATE_PATH}__}">
+                        <span th:utext="#{btn.create}"></span> <span class="glyphicon glyphicon-plus"></span>
+                    </a>
+                </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12" id="lookupTable-container">
+                <section th:if="${successMessageKey != null}" id="successMessage" class="alert alert-success" onclick="$(this).fadeOut()">
+                    <p th:utext="#{__${successMessageKey}__}"></p>
+                </section>
+                <hr />
+                <table id="lookupTable" class="table table-striped table-hover">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th th:utext="#{field.order}">Order</th>
+                            <th th:utext="#{field.unit_area_code}">Unit Area Code</th>
+                            <th th:utext="#{field.nafo_division_code}">NAFO Division Code</th>
+                            <th th:utext="#{table.header.actions}">Action(s)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+                <hr />
+            </div>
+        </div>
+    </th:block>
+    <!-- 	Global Layout JS -->
+    <th:block layout:fragment="scripts">
+        <script th:inline="javascript">
+            var removeDescription = true;
+            var editPath = /*[[@{__${editTHPath}__}]]*/'';
+            var activatePath = /*[[@{__${activateTHPath}__}]]*/'';
+            var listDataPath = /*[[@{__${listDataTHPath}__}]]*/'';
+            var additionalColumnDefs = [{data : 'legacyCode'}, {data: 'nafoDivisionCode'}];
+        </script>
+        <script th:src="@{/js/lookups.js}" type="text/javascript"></script>
+    </th:block>
+</body>
+</html>

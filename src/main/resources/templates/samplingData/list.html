@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{__${'layouts/intranet-layout-'+layoutMode}__}">
+<head>
+    <title th:utext="${@messages.getMessage('page.settings.code_tables.any.list') + ' ' + @messages.getMessage('page.samplings.sample_data')}"></title>
+</head>
+<body>
+    <th:block layout:fragment="content">
+        <h1 class="h3">
+            <span th:utext="#{page.settings.code_tables.any.list}">List of</span>&nbsp;
+            <span th:utext="#{page.samplings.sample_data}">Sample data</span>
+        </h1>
+        <div class="wb-frmvld">
+            <form id="samplingDataSettings" th:action="@{__${'/'+pageLang+T(ca.gc.dfo.psffs.controllers.SamplingDataController).SAMPLING_DATA_DATA_PATH}__}" th:object="${samplingDataAdvancedForm}" method="get">
+                <span class="hidden-print">
+                    <strong th:utext="#{field.source}">Source</strong><br />
+                    <input type="radio" th:field="*{source}" id="sourceAll" value="ALL" /> <label for="sourceAll" th:utext="#{field.all_samplings}">All samplings</label> /
+                    <input type="radio" th:field="*{source}" id="sourceOne" value="ONE" /> <label for="sourceOne" th:utext="#{field.specific_sampling}">Specific sampling</label>
+                    &nbsp;&nbsp;<input type="text" id="sourceSampleId" style="width: 150px;" th:field="*{sourceSampleId}" th:disabled="${samplingDataAdvancedForm.source.name() eq 'ALL'}" maxlength="12" />
+                </span>
+                <ul class="list-unstyled hidden-print">
+                    <li>
+                        <details th:with="controlDisabled=${samplingDataAdvancedForm.source.name() eq 'ONE'}">
+                            <summary th:utext="#{section.advanced}">Advanced</summary>
+                            <ul class="list-unstyled">
+                                <li>
+                                    <details id="cellCriteria">
+                                        <summary th:utext="#{page.samplings.sample_data.cell_criteria}">Cell criteria</summary>
+                                        <p th:utext="#{page.samplings.sample_data.cell_criteria.desc}">Lorem ipsem</p>
+                                        <th:block th:replace="layouts/cellCriteria :: cellCriteria">...</th:block>
+                                    </details>
+                                </li>
+                                <li>
+                                    <details>
+                                        <summary th:utext="#{page.samplings.sample_data.filters}">Filters</summary>
+                                        <p style="font-weight: bold;" th:utext="#{field.sampling_types}">Sampling type(s)</p>
+
+                                        <input type="checkbox" id="filters_samplingTypes_otolith" th:field="*{samplingTypes}" value="o" />
+                                        <label for="filters_samplingTypes_otolith" th:utext="#{field.otolith}">Otolith</label>
+                                        &nbsp;&nbsp;
+                                        <input type="checkbox" id="filters_samplingTypes_stomach" th:field="*{samplingTypes}" value="s" />
+                                        <label for="filters_samplingTypes_stomach" th:utext="#{field.stomach}">Stomach</label>
+                                        &nbsp;&nbsp;
+                                        <input type="checkbox" id="filters_samplingTypes_frozen" th:field="*{samplingTypes}" value="c" />
+                                        <label for="filters_samplingTypes_frozen" th:utext="#{field.frozen}">Frozen</label>
+                                        &nbsp;&nbsp;
+                                        <input type="checkbox" id="filters_samplingTypes_weight" th:field="*{samplingTypes}" value="w" />
+                                        <label for="filters_samplingTypes_weight" th:utext="#{field.weight}">Weight</label>
+                                    </details>
+                                </li>
+                                <li>
+                                    <details>
+                                        <summary th:utext="#{page.samplings.sample_data.fields}">Fields</summary>
+                                        <p th:utext="#{page.samplings.sample_data.fields.desc}">Lorem ipsem</p>
+
+                                        <input type="radio" id="fields_none" th:field="*{fields}" value="none" />
+                                        <label for="fields_none" th:utext="#{field.none}">None</label>
+                                        &nbsp;&nbsp;
+                                        <input type="radio" id="fields_otolith" th:field="*{fields}" value="otolith" />
+                                        <label for="fields_otolith" th:utext="#{field.otolith}">Otolith</label>
+                                        &nbsp;&nbsp;
+                                        <input type="radio" id="fields_weightKg" th:field="*{fields}" value="weightKg" />
+                                        <label for="fields_weightKg">
+                                            <span th:utext="#{field.weight}">Weight</span>(kg)
+                                        </label>
+                                        &nbsp;&nbsp;
+                                        <input type="radio" id="fields_weightG" th:field="*{fields}" value="weightG" />
+                                        <label for="fields_weightG">
+                                            <span th:utext="#{field.weight}">Weight</span>(g)
+                                        </label>
+                                        &nbsp;&nbsp;
+                                        <input type="radio" id="fields_stomach" th:field="*{fields}" value="stomach" />
+                                        <label for="fields_stomach" th:utext="#{field.stomach}">Stomach</label>
+                                        &nbsp;&nbsp;
+                                        <input type="radio" id="fields_archives" th:field="*{fields}" value="archives" />
+                                        <label for="fields_archives" th:utext="#{field.archives}">Archives</label>
+                                    </details>
+                                </li>
+                            </ul>
+                            <button type="button" id="btnFetchRemember" class="btn btn-default">
+                                <span th:utext="#{btn.fetch_remember}">Fetch &amp; Remember</span>&nbsp;<span class="glyphicon glyphicon-floppy-save"></span>
+                            </button>
+                        </details>
+                    </li>
+                </ul>
+                <div class="container-fluid hidden-print">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <button type="button" id="btnFetch1" class="btn btn-primary btnFetch">
+                                <span th:utext="#{btn.fetch}">Fetch</span> <span class="glyphicon glyphicon-circle-arrow-down"></span>
+                            </button>
+                            <button type="button" id="btnSaveAll1" class="btn btn-success btnSaveAll" disabled="disabled">
+                                <span th:utext="#{btn.save_all}">Save All</span> <span class="glyphicon glyphicon-floppy-disk"></span>
+                            </button>
+                        </div>
+                        <div class="col-md-6 text-right">
+                            <button type="button" id="btnMark1" class="btn btn-warning btnMark" style="display: none;" disabled="disabled">
+                                <span th:utext="#{btn.mark_for_archive}">Mark for Archive</span> <span class="glyphicon glyphicon-pushpin"></span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="container-fluid visible-print">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <span class="sampling-data-selection-criteria">
+                                <strong th:utext="${@messages.getMessage('label.generic', '?', true, @messages.getMessage('field.source'))}">Source</strong>
+                                <span data-from="sourceAll"></span>
+                                <span data-from="sourceOne"></span>
+                                <span data-from="sourceSampleId"></span>
+                                <br />
+                            </span>
+                            <strong id="lbl_cell" class="sampling-data-identifiers" style="display: none;" th:utext="${@messages.getMessage('label.square_brackets', '?', true, @messages.getMessage('field.cell'))}">[Cell] </strong>
+                            <strong id="lbl_cell_criteria" class="sampling-data-identifiers" style="display: none;" th:utext="${@messages.getMessage('label.square_brackets', '?', true, @messages.getMessage('page.samplings.sample_data.cell_criteria'))}">[Cell Criteria] </strong>
+                            <span class="sampling-data-selection-criteria">
+                                <strong th:utext="${@messages.getMessage('label.generic', '?', true, @messages.getMessage('field.year'))}">Year</strong>
+                                <span id="cell_year" data-from="cellCriteria_year"></span>
+                            </span>
+                            <span class="sampling-data-selection-criteria">
+                                <strong th:utext="${@messages.getMessage('label.generic', '?', true, @messages.getMessage('page.settings.special_tables.species'))}">Species</strong>
+                                <span id="cell_species" data-from="cellCriteria_sampleSpecies"></span>
+                            </span>
+                            <span class="sampling-data-selection-criteria">
+                                <strong th:utext="${@messages.getMessage('label.generic', '?', true, @messages.getMessage('field.data_source'))}">Data Source</strong>
+                                <span id="cell_dataSource" data-from="cellCriteria_dataSourceId"></span>
+                            </span>
+                            <span class="sampling-data-selection-criteria">
+                                <strong th:utext="${@messages.getMessage('label.generic', '?', true, @messages.getMessage('field.bycatch'))}">Bycatch</strong>
+                                <span id="cell_bycatch" data-from="cellCriteria_bycatchInd"></span>
+                            </span>
+                            <span class="sampling-data-selection-criteria">
+                                <strong th:utext="${@messages.getMessage('label.generic', '?', true, @messages.getMessage('field.country'))}">Country</strong>
+                                <span id="cell_country" data-from="cellCriteria_country"></span>
+                            </span>
+                            <span class="sampling-data-selection-criteria">
+                                <strong th:utext="${@messages.getMessage('label.generic', '?', true, @messages.getMessage('field.quarter'))}">Quarter</strong>
+                                <span id="cell_quarter" data-from="cellCriteria_quarter"></span>
+                            </span>
+                            <span class="sampling-data-selection-criteria">
+                                <strong th:utext="${@messages.getMessage('label.generic', '?', true, @messages.getMessage('field.nafo_division'))}">Nafo division</strong>
+                                <span id="cell_nafoDivision" data-from="cellCriteria_nafo"></span>
+                            </span>
+                            <span class="sampling-data-selection-criteria">
+                                <strong th:utext="${@messages.getMessage('label.generic', '?', true, @messages.getMessage('field.unit_area'))}">Unit area</strong>
+                                <span id="cell_unitArea" data-from="cellCriteria_unitAreaData"></span>
+                            </span>
+                            <span class="sampling-data-selection-criteria">
+                                <strong th:utext="${@messages.getMessage('label.generic', '?', true, @messages.getMessage('field.length_category'))}">Length category</strong>
+                                <span id="cell_lengthCategory" data-from="cellCriteria_lengthCategoryId"></span>
+                            </span>
+                            <span class="sampling-data-selection-criteria">
+                                <strong th:utext="${@messages.getMessage('label.generic', '?', true, @messages.getMessage('field.gear'))}">Gear</strong>
+                                <span id="cell_gear" data-from="cellCriteria_gear"></span>
+                            </span>
+                            <span class="sampling-data-selection-criteria">
+                                <strong th:utext="${@messages.getMessage('label.generic', '?', true, @messages.getMessage('field.mesh_size'))}">Mesh size</strong>
+                                <span id="cell_meshSize" data-from="cellCriteria_meshSizeMillimeters"></span>
+                            </span>
+                            <span class="sampling-data-selection-criteria">
+                                <strong th:utext="${@messages.getMessage('label.generic', '?', true, @messages.getMessage('table.header.company'))}">Company</strong>
+                                <span id="cell_observerCompany" data-from="cellCriteria_observerCompanyId"></span>
+                            </span>
+                            <span class="sampling-data-selection-criteria">
+                                <br />
+                                <strong th:utext="${@messages.getMessage('label.generic', '?', true, @messages.getMessage('field.sampling_types'))}">Sample type(s)</strong>
+                                <span data-from="filters_samplingTypes_otolith"></span>
+                                <span data-from="filters_samplingTypes_stomach"></span>
+                                <span data-from="filters_samplingTypes_frozen"></span>
+                                <span data-from="filters_samplingTypes_weight"></span>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <hr />
+        <datalist id="otolithEdges">
+            <th:block th:each="edge : ${@lookupService.getLookupsByKey('otolithEdges', false)}">
+                <option th:value="${edge.text.substring(0, edge.text.indexOf('-'))}" th:utext="${edge.text}" th:attr="data-active=${edge.active}">Text</option>
+            </th:block>
+        </datalist>
+        <datalist id="otolithReliabilities">
+            <th:block th:each="reliability : ${@lookupService.getLookupsByKey('otolithReliabilities', false)}">
+                <option th:value="${reliability.text.substring(0, reliability.text.indexOf('-'))}" th:utext="${reliability.text}">Text</option>
+            </th:block>
+        </datalist>
+        <datalist id="stomachContents">
+            <th:block th:each="sc : ${@lookupService.getLookupsByKey('stomachContents', false)}">
+                <option th:value="${sc.text.substring(0, sc.text.indexOf('-'))}" th:utext="${sc.text}" th:attr="data-active=${sc.active}">Text</option>
+            </th:block>
+        </datalist>
+        <datalist id="parasites">
+            <th:block th:each="ps : ${@lookupService.getLookupsByKey('parasites', false)}">
+                <option th:value="${ps.text.substring(0, ps.text.indexOf('-'))}" th:utext="${ps.text}" th:attr="data-active=${ps.active}">Text</option>
+            </th:block>
+        </datalist>
+        <div class="table-responsive">
+            <table class="table table-hover" id="sampling-data-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th th:utext="#{field.storage_nbr}">Storage No.</th>
+                        <th th:utext="#{field.tag}">Tag</th>
+                        <th th:utext="#{field.sex}">Sex code</th>
+                        <th th:utext="#{field.maturity_level}">Maturity</th>
+                        <th th:utext="#{field.length}">Length</th>
+                        <th th:utext="#{field.otolith_edge}" class="otolith_otolithEdgeCode sd-list">Edge</th>
+                        <th th:utext="#{field.otolith_reliability}" class="otolith_otolithReliabilityCode sd-list">Reliability</th>
+                        <th th:utext="#{field.age}" class="otolith_age sd-list">Age</th>
+                        <th class="weightKg_roundWt sd-list">
+                            <span th:utext="#{field.round_weight}">Round</span>(kg)
+                        </th>
+                        <th class="weightKg_guttedWt sd-list">
+                            <span th:utext="#{field.gutted_weight}">Gutted</span>(kg)
+                        </th>
+                        <th class="weightKg_ggWt sd-list">
+                            <span th:utext="#{field.gg_weight}">GuttedGilled</span>(kg)
+                        </th>
+                        <th class="weightG_gonadWt sd-list">
+                            <span th:utext="#{field.gonad_weight}">Gonad</span>(g)
+                        </th>
+                        <th class="weightG_liverWt sd-list">
+                            <span th:utext="#{field.liver_weight}">Liver</span>(g)
+                        </th>
+                        <th class="weightG_gutsWt sd-list">
+                            <span th:utext="#{field.guts_weight}">Guts</span>(g)
+                        </th>
+                        <th class="weightG_stomachWt sd-list">
+                            <span th:utext="#{field.stomach}">Stomach</span>(g)
+                        </th>
+                        <th th:utext="#{field.fullness}" class="stomach_fullness sd-list">Fullness</th>
+                        <th th:utext="#{field.parasite}" class="stomach_parasiteCode sd-list">Parasite</th>
+                        <th th:utext="#{table.header.num_parasites}" class="stomach_nbrOfParasites sd-list">No. Parasites</th>
+                        <th th:utext="#{table.header.primary_content}" class="stomach_primaryStomachContentCode sd-list">P. Content</th>
+                        <th th:utext="#{table.header.secondary_content}" class="stomach_secondaryStomachContentCode sd-list">S. Content</th>
+                        <th th:utext="#{form.field.status}" class="archives_status sd-list" style="width: 15%;">Status</th>
+                        <th th:utext="#{table.header.done_q}" class="sdlist_statusId sd-list hidden-print">Done?</th>
+                        <th class="archives_checkbox sd-list hidden-print">
+                            <input type="checkbox" class="archives_checkbox" value="" style="transform: scale(1.5); margin-left: 3px;" />
+                        </th>
+                        <th class="hidden-print" th:utext="#{table.header.actions}">Action(s)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        </div>
+        <hr />
+        <div class="container-fluid hidden-print">
+            <div class="row">
+                <div class="col-md-6">
+                    <button type="button" id="btnFetch2" class="btn btn-primary btnFetch">
+                        <span th:utext="#{btn.fetch}">Fetch</span> <span class="glyphicon glyphicon-circle-arrow-down"></span>
+                    </button>
+                    <button type="button" id="btnSaveAll2" class="btn btn-success btnSaveAll" disabled="disabled">
+                        <span th:utext="#{btn.save_all}">Save All</span> <span class="glyphicon glyphicon-floppy-disk"></span>
+                    </button>
+                </div>
+                <div class="col-md-6 text-right">
+                    <button type="button" id="btnMark2" class="btn btn-warning btnMark" style="display: none;" disabled="disabled">
+                        <span th:utext="#{btn.mark_for_archive}">Mark for Archive</span> <span class="glyphicon glyphicon-pushpin"></span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </th:block>
+    <!-- 	Global Layout JS -->
+    <th:block layout:fragment="scripts">
+        <script type="text/javascript" th:inline="javascript">
+            var editPath = /*[[@{__${'/'+pageLang+T(ca.gc.dfo.psffs.controllers.SamplingDataController).SAMPLING_DATA_EDIT_PATH}__}]]*/'fail';
+            var patchPath = /*[[@{__${T(ca.gc.dfo.psffs.controllers.SamplingDataController).SAMPLING_DATA_PATCH_PATH}__}]]*/'fail';
+            var markPath = /*[[@{__${'/'+pageLang+T(ca.gc.dfo.psffs.controllers.SamplingDataController).SAMPLING_DATA_MARK_PATH}__}]]*/'fail';
+        </script>
+        <script th:src="@{/js/samplingData.js}" type="text/javascript"></script>
+    </th:block>
+</body>
+</html>

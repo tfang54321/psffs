@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{__${'layouts/intranet-layout-'+layoutMode}__}">
+<head>
+    <title th:utext="#{page.cell_definitions.list}"></title>
+</head>
+<body>
+    <th:block layout:fragment="content">
+        <br />
+        <div class="row">
+                <div class="col-sm-6">
+                    <span class="h3" th:utext="#{cell_definition.list.title}">Cell Definitions</span>
+                </div>
+                <div class="col-sm-6 text-right">
+                    <a class="btn btn-default" th:href="@{/__${pageLang+T(ca.gc.dfo.psffs.controllers.CellDefinitionsController).CELL_DEFINITIONS_CREATE_PATH}__}">
+                        <span th:utext="#{btn.create}"></span> <span class="glyphicon glyphicon-plus"></span>
+                    </a>
+
+                    <button id="btnMigrate" class="btn btn-success" disabled="disabled">
+                        <span th:utext="#{btn.migrate}">Migrate</span> <span class="glyphicon glyphicon-save"></span>
+                    </button>
+                </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12" >
+                <hr />
+                <section th:if="${successMessage != null}" class="alert alert-success" onclick="$(this).hide()">
+                    <p th:text="${successMessage}"></p>
+                </section>
+                <section th:if="${errorMessage != null}" class="alert alert-danger" onclick="$(this).hide()">
+                    <p th:text="${errorMessage}"></p>
+                </section>
+                <table class="wb-tables table table-striped table-hover" id="cellDefTable" data-wb-tables='
+                    {"ajax": {"url": "data","dataSrc": "data"},
+                     "order": [[0, "desc"]],
+                     "columns" : [
+                        {"data": "id"}
+                        ,{"data": "year"}
+                        ,{"data": "speciesName"}
+                        ,{"data": "desc"}
+                        ,{"data": "statusStr"}
+                        ,{"data":"buttons", "orderable": false}
+                        ,{"data":"checkbox", "orderable": false}]
+                    }'>
+                    <thead>
+                        <tr>
+                            <th th:utext="#{table.header.cell_id}">Cell Id</th>
+                            <th th:utext="#{field.year}">Year</th>
+                            <th th:utext="#{field.species}">Species</th>
+                            <th th:utext="#{field.description}">Description</th>
+                            <th th:utext="#{form.field.status}">Status</th>
+                            <th th:utext="#{table.header.actions}">Action(s)</th>
+                            <th><input type="checkbox" class="cd-list-checkbox list-checkbox" value="" /></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </th:block>
+    <!-- 	Global Layout JS -->
+    <th:block layout:fragment="scripts">
+        <script th:inline="javascript">
+            var editPath = /*[[@{__${'/'+pageLang+T(ca.gc.dfo.psffs.controllers.CellDefinitionsController).CELL_DEFINITIONS_EDIT_PATH}__}]]*/'';
+            var removePath = /*[[@{__${'/'+pageLang+T(ca.gc.dfo.psffs.controllers.CellDefinitionsController).CELL_DEFINITIONS_REMOVE_PATH}__}]]*/'';
+            var migratePath = /*[[@{__${'/'+pageLang+T(ca.gc.dfo.psffs.controllers.CellDefinitionsController).CELL_DEFINITIONS_MIGRATE_PATH}__}]]*/'';
+        </script>
+        <script th:src="@{/js/cellDefinition.js}" type="text/javascript"></script>
+    </th:block>
+</body>
+</html>

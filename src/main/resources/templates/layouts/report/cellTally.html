@@ -1,0 +1,113 @@
+<th:block xmlns:th="http://www.thymeleaf.org">
+    <table class="table table-hover table-condensed report-table">
+        <thead>
+            <tr>
+                <td colspan="15">
+                    <form th:object="${reportForm}">
+                        <fieldset>
+                            <th:block th:replace="layouts/cellCriteria :: cellCriteria(reportMode=${true},textOnly=${true})">...</th:block>
+                            <hr />
+                            <div class="container-fluid">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <label>
+                                            <span th:utext="#{field.cell}">Cell</span> <span th:utext="#{page.header.sampling_requirements}">Sampling requirements</span>
+                                        </label>
+                                        <th:block th:if="${cellDef eq null}">
+                                            <br />
+                                            <span th:utext="#{report.cell_def.more_than_one}">More than one cell found</span>
+                                        </th:block>
+                                        <div th:if="${cellDef ne null}" class="container-fluid">
+                                            <div class="row">
+                                                <div class="col-xs-5">
+                                                    <label for="cellDef_otoliths" th:utext="${@messages.getMessage('label.generic', '?', true, @messages.getMessage('field.otoliths'))}">Otoliths</label>
+                                                    <input type="text" id="cellDef_otoliths" th:value="${cellDef.otolithT}" data-text-only="true" />
+                                                </div>
+                                                <div class="col-xs-5">
+                                                    <label for="cellDef_weights" th:utext="${@messages.getMessage('label.generic', '?', true, @messages.getMessage('field.weights'))}">Weights</label>
+                                                    <input type="text" id="cellDef_weights" th:value="${cellDef.weightT}" data-text-only="true" />
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-xs-5">
+                                                    <label for="cellDef_stomachs" th:utext="${@messages.getMessage('label.generic', '?', true, @messages.getMessage('field.stomachs'))}">Stomachs</label>
+                                                    <input type="text" id="cellDef_stomachs" th:value="${cellDef.stomachT}" data-text-only="true" />
+                                                </div>
+                                                <div class="col-xs-5">
+                                                    <label for="cellDef_frozens" th:utext="${@messages.getMessage('label.generic', '?', true, @messages.getMessage('field.frozens'))}">Weights</label>
+                                                    <input type="text" id="cellDef_frozens" th:value="${cellDef.frozenT}" data-text-only="true" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row"><div class="col-xs-12"><hr /></div></div>
+                                <div class="row">
+                                    <div class="col-xs-12">
+                                        <label for="nbrLF" th:utext="#{report.label.nbr_lf}">No. of Frequencies:</label>
+                                        <input type="text" id="nbrLF" th:value="${nbrLF}" data-text-only="true" />
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-xs-12">
+                                        <label for="nbrTSS" th:utext="#{report.label.nbr_tss}">No. of Trip, Set, Species:</label>
+                                        <input type="text" id="nbrTSS" th:value="${nbrTSS}" data-text-only="true" />
+                                    </div>
+                                </div>
+                            </div>
+                        </fieldset>
+                    </form>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2" class="col-xs-2">&nbsp;</td>
+                <td colspan="3" class="text-center col-xs-2">---<strong th:utext="#{field.numbers}">Num</strong>---</td>
+                <td colspan="3" class="text-center col-xs-2">---<strong th:utext="#{field.otoliths}">Oto</strong>---</td>
+                <td colspan="3" class="text-center col-xs-2">---<strong th:utext="#{field.weights}"></strong>---</td>
+                <td colspan="4" class="text-center col-xs-3">---<strong th:utext="#{field.stomachs}"></strong>---</td>
+            </tr>
+            <tr>
+                <th th:utext="#{field.length_group}" colspan="2">Length group</th>
+                <th class="text-right">M</th>
+                <th class="text-right">F</th>
+                <th class="text-right">U</th>
+                <th class="text-right">M</th>
+                <th class="text-right">F</th>
+                <th class="text-right">U</th>
+                <th class="text-right">M</th>
+                <th class="text-right">F</th>
+                <th class="text-right">U</th>
+                <th class="text-right">M</th>
+                <th class="text-right">F</th>
+                <th class="text-right">U</th>
+                <th class="text-right">Froz</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:if="${#maps.isEmpty(tallyMap)}">
+                <td colspan="15">
+                    <section class="alert alert-info">
+                        <p th:utext="#{js.info.no_data_found}">No data</p>
+                    </section>
+                </td>
+            </tr>
+            <tr th:if="${not #maps.isEmpty(tallyMap)}" th:each="mapEntry : ${tallyMap}">
+                <td class="text-right" th:utext="${mapEntry.key.lengthGroup}">##</td>
+                <td th:utext="${mapEntry.key.lengthUnit}">#m</td>
+                <td class="text-right" th:utext="${mapEntry.value.maleStr}">##</td>
+                <td class="text-right" th:utext="${mapEntry.value.femaleStr}">##</td>
+                <td class="text-right" th:utext="${mapEntry.value.unsexedStr}">##</td>
+                <td class="text-right" th:utext="${mapEntry.value.maleOtolithsStr}">##</td>
+                <td class="text-right" th:utext="${mapEntry.value.femaleOtolithsStr}">##</td>
+                <td class="text-right" th:utext="${mapEntry.value.unsexedOtolithsStr}">##</td>
+                <td class="text-right" th:utext="${mapEntry.value.maleWeightsStr}">##</td>
+                <td class="text-right" th:utext="${mapEntry.value.femaleWeightsStr}">##</td>
+                <td class="text-right" th:utext="${mapEntry.value.unsexedWeightsStr}">##</td>
+                <td class="text-right" th:utext="${mapEntry.value.maleStomachsStr}">##</td>
+                <td class="text-right" th:utext="${mapEntry.value.femaleStomachsStr}">##</td>
+                <td class="text-right" th:utext="${mapEntry.value.unsexedStomachsStr}">##</td>
+                <td class="text-right" th:utext="${mapEntry.value.frozensStr}">##</td>
+            </tr>
+        </tbody>
+    </table>
+</th:block>

@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{__${'layouts/intranet-layout-'+layoutMode}__}">
+<head>
+    <title th:utext="#{page.samplings.observer.edit.title}"></title>
+</head>
+<body>
+    <th:block layout:fragment="content">
+        <h3 th:utext="#{page.samplings.observer.edit.title}">Title</h3>
+        <div id="edit-tss-form-container" class="wb-frmvld">
+            <form id="tripSetSpeciesForm" th:object="${tripSetSpeciesForm}" th:action="@{__${T(ca.gc.dfo.psffs.controllers.ObserverController).OBSERVER_CREATE_PATH}__}" method="post">
+                <ul class="list-unstyled">
+                    <li>
+                        <details th:attr="open=${'open'}">
+                            <summary th:utext="#{page.header.header}">Header</summary>
+                            <th:block th:replace="layouts/tripSetSpecies :: header(renderId=${true},renderLength=${true})" />
+                        </details>
+                    </li>
+                    <li>
+                        <details id="dt-otolith-summ">
+                            <summary th:utext="#{page.header.otolith_summary}">Otolith summary</summary>
+                            <div class="container-fluid">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <button type="button" id="btn-view-sd" class="btn btn-default" onclick="observer.viewSamplingData()">
+                                            <span th:utext="#{btn.view_sampling_data}">View sampling data</span>&nbsp;<span class="glyphicon glyphicon-th-list"></span>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <div class="table-responsive">
+                                            <table class="table table-hover lf-summ" id="tbl-lf-summary" style="margin-bottom: 0px!important;">
+                                                <thead class="lf-summ">
+                                                <tr>
+                                                    <th class="lf-summ-length-unit lf-summ-cm">cm</th>
+                                                    <th class="lf-summ-o lf-summ-u" th:utext="#{field.unsexed}">Unsexed</th>
+                                                    <th class="lf-summ-o lf-summ-m" th:utext="#{field.male}">Male</th>
+                                                    <th class="lf-summ-o lf-summ-f" th:utext="#{field.female}">Female</th>
+                                                </tr>
+                                                </thead>
+                                                <tbody class="lf-summ" id="tss-summ-data-tbody">
+                                                </tbody>
+                                            </table>
+                                            <table class="table table-hover lf-summ lf-summ-totals">
+                                                <tbody style="overflow-y: auto;">
+                                                <tr>
+                                                    <th class="lf-summ-cm">
+                                                        <abbr th:title="#{table.header.totals}">TT</abbr>
+                                                    </th>
+                                                    <td class="lf-summ-u"><span class="lf-summ-o lf-summ-u">0</span></td>
+                                                    <td class="lf-summ-m"><span class="lf-summ-o lf-summ-m">0</span></td>
+                                                    <td class="lf-summ-f"><span class="lf-summ-o lf-summ-f">0</span></td>
+                                                    <td style="width: 1.0em;">&nbsp;</td>
+                                                </tr>
+                                                </tbody>
+                                            </table>
+                                            <input type="hidden" id="entriesModified" name="entriesModified" value="false" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </details>
+                    </li>
+                    <li>
+                        <details>
+                            <summary th:utext="#{page.header.review}">Review</summary>
+                            <div class="container-fluid">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <label for="comments" th:utext="#{field.comments}" class="field-name">Comments</label><br />
+                                        <textarea id="comments" rows="6" class="full-width" th:attr="data-maxlength=${'4000'}" th:field="*{comments}"></textarea>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <label for="checkedBy" th:utext="${@messages.getMessage(#request, 'field.checked_by')}">Checked by</label><br />
+                                        <select id="checkedBy" th:field="*{checkedBy}" class="full-width" th:attr="data-searchable=${true}">
+                                            <th:block th:each="user : ${@lookupService.getLookupsByKey(#request, 'enteredBys', true, 'other')}">
+                                                <option th:value="${user.value}" th:utext="${user.text}" th:attr="data-active=${user.active}">Text</option>
+                                            </th:block>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </details>
+                    </li>
+                </ul>
+                <button type="submit" class="btn btn-primary" id="btnSave" th:utext="#{btn.save}" th:disabled="${true}">Save</button>
+                <button type="button" class="btn btn-default" th:utext="#{btn.reset}" onclick="window.location.reload(true)">Reset</button>
+                <button type="button" class="btn btn-default bc-back" th:utext="#{btn.cancel}">Cancel</button>
+            </form>
+        </div>
+    </th:block>
+    <!-- 	Global Layout JS -->
+    <th:block layout:fragment="scripts">
+        <script type="text/javascript" th:inline="javascript">
+            var listPath = /*[[@{__${'/'+pageLang+T(ca.gc.dfo.psffs.controllers.ObserverController).OBSERVER_LIST_PATH}__}]]*/'fail';
+            var getTSSPath = /*[[@{__${T(ca.gc.dfo.psffs.controllers.ObserverController).OBSERVER_EDIT_DATA_PATH}__}]]*/'/fail';
+            var sdPath = /*[[@{__${'/'+pageLang+T(ca.gc.dfo.psffs.controllers.SamplingDataController).SAMPLING_DATA_LIST_PATH}__}]]*/'fail';
+        </script>
+        <script th:src="@{/js/observer.js}" type="text/javascript"></script>
+    </th:block>
+</body>
+</html>

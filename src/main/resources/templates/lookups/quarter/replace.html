@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{__${'layouts/intranet-layout-'+layoutMode}__}">
+<head>
+    <title th:utext="${@messages.getMessage('page.header.create_in')+' '+@messages.getMessage('page.settings.special_tables.quarters')}"></title>
+</head>
+<body>
+<th:block layout:fragment="content">
+    <br />
+    <section class="panel panel-primary">
+        <div class="panel-heading">
+            <h3 class="panel-title" th:utext="${@messages.getMessage('page.header.replace')+' '+@messages.getMessage('page.settings.special_tables.quarters')}">Title</h3>
+        </div>
+        <div class="wb-frmvld panel-body">
+            <section class="alert alert-info" onclick="$(this).hide()">
+                <p th:utext="#{page.quarters.info_message}">Completing this form will replace the current quarters for the chosen Catch Location</p>
+            </section>
+            <section th:if="${errorMessageKey != null}" class="alert alert-danger" onclick="$(this).hide()">
+                <p th:utext="#{__${errorMessageKey}__}">Error</p>
+            </section>
+            <section th:if="${errorMessage != null}" class="alert alert-danger" onclick="$(this).hide()">
+                <p th:utext="${errorMessage}">Error</p>
+            </section>
+            <div id="displayErr"></div>
+            <form th:action="@{__${'/'+pageLang+T(ca.gc.dfo.psffs.controllers.lookups.QuarterController).QUARTER_REPLACE_PATH}__}" th:method="POST" th:object="${groupedQuarterForm}" id="quarterForm">
+                <div class="container-fluid">
+                    <div class="row">
+                        <div class="col-md-3">
+                            <label for="catchLocationId" class="required">
+                                <span class="field-name" th:utext="#{field.catch_location}">Catch Location</span>
+                                <strong class="required" th:utext="#{form.required}">required</strong>
+                            </label>
+                            <br/>
+                            <select id="catchLocationId" class="full-width" required="required" th:field="*{catchLocationId}">
+                                <th:block th:each="cl : ${@lookupService.getLookupsByKey('catchLocations',true)}">
+                                    <option th:value="${cl.value}" th:utext="${cl.text}">Text</option>
+                                </th:block>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6" id="firstQuarter">
+                            <h4 th:utext="#{form.header.first_quarter}">First Quarter</h4>
+                            <th:block th:replace="layouts/codeTables :: quarterFields(quarterNum=${1})" />
+                        </div>
+                        <div class="col-md-6" id="secondQuarter">
+                            <h4 th:utext="#{form.header.second_quarter}">Second Quarter</h4>
+                            <th:block th:replace="layouts/codeTables :: quarterFields(quarterNum=${2})" />
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6" id="thirdQuarter">
+                            <h4 th:utext="#{form.header.third_quarter}">Third Quarter</h4>
+                            <th:block th:replace="layouts/codeTables :: quarterFields(quarterNum=${3})" />
+                        </div>
+                        <div class="col-md-6" id="fourthQuarter">
+                            <h4 th:utext="#{form.header.fourth_quarter}">Fourth Quarter</h4>
+                            <th:block th:replace="layouts/codeTables :: quarterFields(quarterNum=${4})" />
+                        </div>
+                    </div>
+                </div>
+                <br />
+                <button id="cdSubmit" type="submit" class="btn btn-primary" th:utext="#{btn.replace}">Replace</button>
+                <input id="btnReset" type="reset" class="btn btn-default" th:value="${@messages.getMessage('btn.reset', true)}" />
+                <button id="btnCancel" type="button" class="btn btn-default bc-back" th:utext="#{btn.cancel}">Cancel</button>
+            </form>
+        </div>
+    </section>
+    <br /><br />
+</th:block>
+<!-- 	Global Layout JS -->
+<th:block layout:fragment="scripts">
+    <script th:src="@{/js/lookups.js}" type="text/javascript"></script>
+    <script th:inline="javascript">
+        var pageLang = /*[[${pageLang}]]*/'';
+        var stopJSDisable = /*[[${stopJSDisable}]]*/'';
+    </script>
+    <script th:src="@{/js/quarter.js}" type="text/javascript"></script>
+</th:block>
+</body>
+</html>

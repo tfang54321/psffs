@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{__${'layouts/intranet-layout-'+layoutMode}__}">
+<head>
+    <title th:utext="#{page.server_tools.reports}"></title>
+</head>
+<body>
+    <th:block layout:fragment="content">
+        <h3 th:utext="#{page.server_tools.reports}" class="hidden-print">Reports</h3>
+        <section id="criteria-section" class="hidden-print">
+            <form id="execute-report-form" th:object="${reportForm}" th:action="@{__${'/' + pageLang + T(ca.gc.dfo.psffs.controllers.ServerToolsController).EXECUTE_REPORT_PATH}__}" method="post">
+                <ul class="list-unstyled">
+                    <li>
+                        <details open="open" id="selection-criteria-details">
+                            <summary th:utext="#{details.summary.selection_criteria}">Selection criteria</summary>
+                            <div class="container-fluid">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <label for="reportType" class="required">
+                                            <span class="field-name" th:utext="#{table.header.type}">Type</span>
+                                            <strong class="required" th:utext="#{form.required}">required</strong>
+                                        </label><br />
+                                        <select id="reportType" th:field="*{reportType}">
+                                            <th:block th:each="report : ${@lookupService.getLookupsByKey('reportTypes', true)}">
+                                                <option th:value="${report.value}" th:utext="${report.text}">Report</option>
+                                            </th:block>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <br />
+                            <ul class="list-unstyled">
+                                <li>
+                                    <details open="open">
+                                        <summary th:utext="#{page.samplings.sample_data.cell_criteria}">Cell criteria</summary>
+                                        <th:block th:replace="layouts/cellCriteria :: cellCriteria(reportMode=${true})">...</th:block>
+                                    </details>
+                                </li>
+                            </ul>
+                        </details>
+                    </li>
+                </ul>
+                <button id="btnGenerate" type="submit" class="btn btn-primary" disabled="disabled" th:utext="#{btn.generate}">Generate</button>
+            </form>
+        </section>
+        <section id="report-section" style="display: none;">
+            <hr class="hidden-print" style="margin-bottom: 0px!important;" />
+            <span id="report-title-span" class="h4 visible-print"></span>
+            <div>&nbsp;</div>
+            <br />
+            <button type="button" class="btn btn-default hidden-print" th:utext="#{btn.reset}" onclick="reports.clearReport()">Reset</button>
+        </section>
+    </th:block>
+    <!-- 	Global Layout JS -->
+    <th:block layout:fragment="scripts">
+        <script th:src="@{/js/reports.js}" type="text/javascript"></script>
+    </th:block>
+</body>
+</html>

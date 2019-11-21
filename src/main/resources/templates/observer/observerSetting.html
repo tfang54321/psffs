@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{__${'layouts/intranet-layout-'+layoutMode}__}">
+<head>
+    <title th:utext="#{page.header.observer_settings}"></title>
+</head>
+<body>
+    <th:block layout:fragment="content">
+        <h3 th:utext="#{page.header.observer_settings}">Title</h3>
+        <br />
+        <div class="row">
+            <div class="col-md-12">
+                <div th:if="${successMessage != null}" class="tsTempDisplay">
+                    <p id="successMessage" th:text="${successMessage}"></p>
+                </div>
+                <div id="predendAlert"></div>
+                <div class="panel panel-primary">
+                    <header class="panel-heading">
+                        <h3 class="panel-title" th:utext="#{page.header.observer_settings}">Title</h3>
+                    </header>
+                    <div class="panel-body">
+                        <section class="container-fluid">
+                            <div class="wb-frmvld">
+                                <form th:action="@{__${'/'+pageLang+T(ca.gc.dfo.psffs.controllers.ObserverSettingsController).OBSERVER_SETTINGS_SAVE_PATH}__}" th:object="${settingForm}" th:method="POST" id="tripForm">
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <label for="tsSpecies">
+                                                        <span class="field-name" th:utext="#{page.settings.special_tables.species}">Species</span>
+                                                    </label>
+                                                    <br/>
+                                                    <select class="full-width" id="tsSpecies" th:field="*{speciesId}" th:attr="data-searchable=${'true'}">
+                                                        <th:block th:each="species : ${@lookupService.getLookupsByKey('species', true)}">
+                                                            <option th:value="${species.value}" th:utext="${species.text}">Text</option>
+                                                        </th:block>
+                                                    </select>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <label for="tsYear">
+                                                        <span class="field-name" th:utext="#{field.year}">Year</span>
+                                                    </label>
+                                                    <br/>
+                                                    <select class="full-width space-dropdown" id="tsYear" th:field="*{year}">
+                                                        <th:block th:each="years : ${years}">
+                                                            <option th:value="${years}" th:utext="${years==0} ? #{form.dropdown.default_val} : ${years}">Text</option>
+                                                        </th:block>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row"><div class="col-md-12"><hr /></div></div>
+                                    <div class="row row-margin-left" id="subSection">
+                                        <div class="col-md-5">
+                                            <div class="row">
+                                                <div class="col-md-12">
+                                                    <label for="tsId">
+                                                        <span class="field-name" th:utext="#{field.ts_id}">Trip Setting ID</span>
+                                                    </label>
+                                                    <br/>
+                                                    <input class="full-width space-dropdown" th:field="*{id}" id="tsId" readonly="readonly" />
+                                                </div>
+                                                <div class="col-md-12">
+                                                    <label for="tsDesc">
+                                                        <span class="field-name" th:utext="#{field.description}">Description</span>
+                                                    </label>
+                                                    <br/>
+                                                    <textarea class="full-width" th:field="*{description}" id="tsDesc" maxlength="255" rows="4"></textarea>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-7">
+                                            <h4 class="approach-header" th:utext="#{form.header.sampling_approach}">Sampling approach</h4>
+                                            <div class="row row-margin-left">
+                                                <div class="col-md-6">
+                                                    <label for="tsUnits" class="required">
+                                                        <span class="field-name" th:utext="#{field.units}">Length Units</span>
+                                                        <strong class="required" th:utext="#{form.required}">(required)</strong>
+                                                    </label>
+                                                    <br/>
+                                                    <select class="full-width space-dropdown" th:field="*{lengthUnitId}" id="tsUnits" required="required">
+                                                        <th:block th:each="units : ${@lookupService.getLookupsByKey('lengthUnits', true)}">
+                                                            <option th:value="${units.value}" th:utext="${units.text}">Text</option>
+                                                        </th:block>
+                                                    </select>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <label for="tsLengthGroup" class="required">
+                                                        <span class="field-name" th:utext="#{field.length_group}">Length Group</span>
+                                                        <strong class="required" th:utext="#{form.required}">(required)</strong>
+                                                    </label>
+                                                    <br/>
+                                                    <select class="full-width space-dropdown" id="tsLengthGroup" th:field="*{lengthGroupData}" required="required">
+                                                        <th:block th:each="lengthGroup : ${@lookupService.getLookupsByKey('lengthGroups', true)}">
+                                                            <option th:value="${lengthGroup.value}" th:utext="${lengthGroup.text}">Text</option>
+                                                        </th:block>
+                                                    </select>
+                                                </div>
+                                            </div>
+
+                                            <div class="row row-margin-left">
+                                                <div class="col-md-12">
+                                                    <div id="lrError"></div>
+                                                    <label for="tsLengthRangeStart" class="required">
+                                                        <span class="field-name" th:utext="#{field.length_range}">Length Range</span>
+                                                        <strong class="required" th:utext="#{form.required}">(required)</strong>
+                                                    </label>
+                                                    <label for="tsLengthRangeEnd"><span class="field-name" style="display:none;" th:utext="#{field.length_range_to}">Length Range To</span></label>
+                                                    <br/>
+                                                    <div class="row">
+                                                        <div class="col-xs-4 col-md-4">
+                                                            <input class="full-width, removeNumbler rangeMinLessThanMax" type="number" required="required" th:field="*{lengthGroupMin}" min="0" max="998" id="tsLengthRangeStart"
+                                                                   oninput="app.validateIsNumber(this);app.validateLengthOfNumber(this, 3)"/>
+                                                        </div>
+                                                        <div class="col-xs-1 col-md-1 removePadding">
+                                                            <p th:utext="#{field.to}">to</p>
+                                                        </div>
+                                                        <div class="col-xs-4 col-md-4">
+                                                            <input class="full-width removeNumbler" type="number" required="required" th:field="*{lengthGroupMax}" min="1" max="999" id="tsLengthRangeEnd"
+                                                                   oninput="app.validateIsNumber(this);app.validateLengthOfNumber(this, 3)"/>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="col-md-12">
+                                            <hr />
+                                            <input type="checkbox" th:name="setDefault" id="setDefault" style="display: none;" />&nbsp;<label class="padLabelLeft" id="setDefaultLabel" for="setDefault" th:utext="#{form.trip_setting.save_as_default}" style="display: none;">Would you like to make these settings the default for this species?</label>
+                                            <br />
+                                            <br />
+                                            <button id="tsSubmit" type="submit" class="btn btn-primary" th:utext="#{btn.save}">Create</button>
+                                            <button type="button" class="btn btn-default" th:utext="#{btn.reset}" id="tsBtnReset">Reset</button>
+                                            <button type="button" class="btn btn-default bc-back" th:utext="#{btn.cancel}">Cancel</button>
+                                            <br /><br />
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </section>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </th:block>
+    <!-- 	Global Layout JS -->
+    <th:block layout:fragment="scripts">
+        <script th:inline="javascript">
+            var dataPath = /*[[@{__${'/'+pageLang+T(ca.gc.dfo.psffs.controllers.ObserverSettingsController).OBSERVER_SETTINGS_DATA_PATH}__}]]*/'';
+        </script>
+        <script th:src="@{/js/samplingSetting.js}" type="text/javascript"></script>
+    </th:block>
+</body>
+</html>
