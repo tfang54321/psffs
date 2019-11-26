@@ -11,8 +11,8 @@ steps {
 
 stage('buildimage') {
 steps {
-sh 'chmod a+x gradle'
-sh './gradle  build docker'
+
+bat  'gradlew  build docker'
 }
 }
 }
