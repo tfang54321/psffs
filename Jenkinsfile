@@ -4,7 +4,7 @@ node {
        }
 
     stage('build Image') {
-             ./gradlew build docker
+             gradlew build docker
           }
 
 
