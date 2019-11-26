@@ -7,9 +7,16 @@ steps {
  git 'https://github.com/tfang54321/psffs.git'
 }
 }
-stage('Compile') {
+
+stage('assign') {
 steps {
 git update-index --chmod=+x gradlew
+
+}
+}
+stage('Compile') {
+steps {
+
 sh './gradlew  clean compileJava'
 }
 }
