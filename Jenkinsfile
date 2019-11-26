@@ -8,18 +8,15 @@ steps {
 }
 }
 
-stage('assign') {
-steps {
-git update-index --chmod=+x gradlew
 
-}
-}
-stage('Compile') {
+stage('buildimage') {
 steps {
 
-sh './gradlew  clean compileJava'
+sh './gradlew  build docker'
+}
+}
 }
 }
 
-}
-}
+
+
