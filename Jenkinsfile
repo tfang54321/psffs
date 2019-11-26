@@ -12,7 +12,7 @@ steps {
 stage('buildimage') {
 steps {
 
-sh  './gradlew  build docker'
+sh  './gradle  build docker'
 }
 }
 }
