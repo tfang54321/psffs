@@ -1,12 +1,21 @@
-node {
-       stage('Checkout') {
-          git 'https://github.com/tfang54321/psffs.git' // checks out Dockerfile
-       }
+pipeline {
+agent any
+stages {
+stage(“Checkout”) {
+steps {
 
-    stage('build Image') {
-             gradlew build docker
-          }
-
-
-
+ git 'https://github.com/tfang54321/psffs.git'
+}
+}
+stage(“Compile”) {
+steps {
+sh “./gradlew compileJava”
+}
+}
+stage(“Unit test”) {
+steps {
+sh “./gradlew test”
+}
+}
+}
 }
