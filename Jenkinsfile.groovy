@@ -1,13 +1,13 @@
 pipeline {
 agent any
 stages {
-stage(“Checkout”) {
+stage('Checkout') {
 steps {
 
  git 'https://github.com/tfang54321/psffs.git'
 }
 }
-stage(“Compile”) {
+stage('Compile') {
 steps {
 sh './gradlew  clean compileJava'
 }
