@@ -9,7 +9,8 @@ steps {
 }
 stage('Compile') {
 steps {
-bash ./gradlew  clean compileJava
+git update-index --chmod=+x gradlew
+sh './gradlew  clean compileJava'
 }
 }
 
