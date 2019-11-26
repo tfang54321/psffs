@@ -7,8 +7,6 @@ node {
               gradlew build docker
           }
 
-  stage('run Image') {
-               docker run -p 8091:5000 -t springio/gs-spring-boot-docker-psffs1126
-           }
+ 
 
 }
