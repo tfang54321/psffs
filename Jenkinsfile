@@ -9,7 +9,7 @@ steps {
 }
 stage(“Compile”) {
 steps {
-gradle compileJava
+sh 'gradle  clean compileJava'
 }
 }
 
