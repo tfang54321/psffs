@@ -9,7 +9,7 @@ steps {
 }
 stage(“Compile”) {
 steps {
-sh “gradle compileJava”
+gradle compileJava
 }
 }
 
