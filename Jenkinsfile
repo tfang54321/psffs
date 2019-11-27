@@ -1,7 +1,7 @@
-pipeline {
+node {
  
   def mvnHome = tool 'gradle61' 
-agent any
+
 stages {
 stage('Checkout') {
 steps {
