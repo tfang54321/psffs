@@ -17,7 +17,7 @@ stage('buildimage') {
 
 bat  "'${mvnHome}/bin/gradle'  build docker"
 
-}
+
 }
 }
 
