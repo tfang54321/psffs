@@ -15,7 +15,7 @@ mvnHome = tool 'gradle61'
 stage('buildimage') {
 
 
-bat  "'${mvnHome}/bin/gradle'  build docker"
+sh  "'${mvnHome}/bin/gradle'  build docker"
 
 
 }
