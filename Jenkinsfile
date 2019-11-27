@@ -12,7 +12,7 @@ steps {
 stage('buildimage') {
 steps {
 
-bat  'gradlew  build docker'
+bat  'gradle  build docker'
 }
 }
 }
