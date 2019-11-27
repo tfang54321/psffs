@@ -12,7 +12,7 @@ steps {
 stage('buildimage') {
 steps {
 
-bat  'C:\apps\gradle-6.0.1\bin\gradle  build docker'
+bat  '$(gradle_home)\gradle  build docker'
 }
 }
 }
