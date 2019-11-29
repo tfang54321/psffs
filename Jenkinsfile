@@ -13,7 +13,7 @@ mvnHome = tool 'gradle61'
 
 
 stage('buildimage') {
-
+sh  "'${mvnHome}/bin/gradle'    artifactoryPublish"
 
 sh  "'${mvnHome}/bin/gradle'   docker"
  
